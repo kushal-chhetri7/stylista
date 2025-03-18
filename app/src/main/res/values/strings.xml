@@ -1,0 +1,25 @@
+<resources>
+    <string name="app_name">Stylista</string>
+    <string name="login">Log in</string>
+    <string name="signup">Sign up</string>
+    <string name="email">Email Address</string>
+    <string name="hintEmail">example@gmail.com</string>
+    <string name="password">Password</string>
+    <string name="hintPassword">must be 8 characters</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="hintConfirmPassword">repeat password</string>
+    <string name="forgotPassword">Forgot Password?</string>
+    <string name="orLoginWith">or Login with</string>
+    <string name="orRegisterWith">or Register with</string>
+    <string name="facebook">f</string>
+    <string name="google"> </string>
+    <string name="alternativeSignUp">Don\'t have an account? Sign up</string>
+    <string name="alternativeLogin">Already have an account? Log in</string>
+    <string name="facebook_app_id">633354209312421</string>
+    <string name="default_web_client_id">464014514904-h0asp21582a5fld1oe4qlokith9svgqo.apps.googleusercontent.com</string>
+    <string name="facebook_client_token">5acb7e7e4dacdbeac939f44544bbec33</string>
+    <string name="fb_login_protocol_scheme">fb1668977596911004</string>
+
+
+</resources>
+

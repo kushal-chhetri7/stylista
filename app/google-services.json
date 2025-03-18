@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "846301266830",
+    "project_id": "stylista-4a87e",
+    "storage_bucket": "stylista-4a87e.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:846301266830:android:457a3c5034fad5089edadf",
+        "android_client_info": {
+          "package_name": "com.package.stylista"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "846301266830-dnj4vuefhu5smof9nl8h5jegbbdg72ll.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyA1DD_lXD77bL1qqDh0PxkZX-KSDgNk4wg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "846301266830-dnj4vuefhu5smof9nl8h5jegbbdg72ll.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
