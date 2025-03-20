@@ -47,7 +47,7 @@ public class LoginActivity extends AppCompatActivity {
     private TextInputEditText passwordEditText;
     private TextInputLayout passwordLayout;
     private Button facebookButton, login;
-    private TextView tvSignUp;
+    private TextView tvSignUp, forgotPassword;
     private FrameLayout googleButton;
 
     private GoogleSignInClient googleSignInClient;
@@ -72,6 +72,7 @@ public class LoginActivity extends AppCompatActivity {
         facebookButton = findViewById(R.id.facebookButton);
         googleButton = findViewById(R.id.googleButton);
         tvSignUp = findViewById(R.id.tvSignUp);
+        forgotPassword = findViewById(R.id.forgotPassword);
 
         // Configure Google Sign-In
         configureGoogleSignIn();
@@ -136,6 +137,14 @@ public class LoginActivity extends AppCompatActivity {
 
         tvSignUp.setText(spannableString);
         tvSignUp.setMovementMethod(LinkMovementMethod.getInstance());
+
+        forgotPassword.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(LoginActivity.this, ForgotPasswordEmail.class);
+                startActivity(intent);
+            }
+        });
     }
 
     private void configureGoogleSignIn() {
