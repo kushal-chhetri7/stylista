@@ -2,7 +2,7 @@
     <string name="app_name">Stylista</string>
     <string name="login">Log in</string>
     <string name="signup">Sign up</string>
-    <string name="email">Email Address</string>
+    <string name="email">Email address</string>
     <string name="hintEmail">example@gmail.com</string>
     <string name="password">Password</string>
     <string name="hintPassword">must be 8 characters</string>
@@ -19,6 +19,13 @@
     <string name="default_web_client_id">464014514904-h0asp21582a5fld1oe4qlokith9svgqo.apps.googleusercontent.com</string>
     <string name="facebook_client_token">5acb7e7e4dacdbeac939f44544bbec33</string>
     <string name="fb_login_protocol_scheme">fb1668977596911004</string>
+    <string name="back">Back</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password_subtitle">Don’t worry! It happens. Please enter the email associated with your account.</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="send_code">Send code</string>
+    <string name="remember_password">Remember password? Log in</string>
+
 
 
 </resources>
