@@ -60,6 +60,18 @@
             android:name=".ForgotPasswordEmail"
             android:exported="true">
         </activity>
+        <activity
+            android:name=".PasswordChangedSuccess"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".ResetPassword"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".EmailFourDigitCode"
+            android:exported="true">
+        </activity>
     </application>
 
 </manifest>

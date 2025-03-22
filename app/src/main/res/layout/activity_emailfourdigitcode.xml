@@ -1,0 +1,172 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/white"
+    android:padding="16dp">
+
+    <ImageButton
+        android:id="@+id/backButton"
+        android:layout_width="39dp"
+        android:layout_height="39dp"
+        android:background="@drawable/rounded_button_background"
+        android:contentDescription="@string/back"
+        android:src="@drawable/ic_arrow_back"
+        android:layout_marginTop="50dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <LinearLayout
+        android:id="@+id/titleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="46dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/backButton">
+
+        <TextView
+            android:id="@+id/checkTitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/check_mail"
+            android:textAppearance="@style/TextAppearance.AppCompat.Display1"
+            android:textStyle="bold"
+            android:fontFamily="@font/poppins"
+            android:textColor="@color/black"
+            android:textSize="30sp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/subtitleLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/titleLayout">
+
+        <TextView
+            android:id="@+id/checkEmailSubtitle"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:fontFamily="@font/inter"
+            android:textColor="#B3000000"
+            android:textStyle="bold"
+            android:text="@string/check_mail_subtitle"
+            android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
+
+        <TextView
+            android:id="@+id/secondTextView"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Your Second Text"
+            android:textSize="14sp"
+            android:textStyle="bold"
+            android:layout_marginStart="8dp" />
+
+    </LinearLayout>
+
+    <LinearLayout
+        android:id="@+id/codeBoxesLayout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="24dp"
+        android:gravity="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/subtitleLayout">
+
+        <EditText
+            android:id="@+id/digit1"
+            android:layout_width="77dp"
+            android:layout_height="77dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:textSize="20sp"
+            android:layout_marginEnd="20dp" />
+
+        <EditText
+            android:id="@+id/digit2"
+            android:layout_width="77dp"
+            android:layout_height="77dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:textSize="20sp"
+            android:layout_marginEnd="20dp" />
+
+        <EditText
+            android:id="@+id/digit3"
+            android:layout_width="77dp"
+            android:layout_height="77dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:textStyle="bold"
+            android:textSize="32sp"
+            android:layout_marginEnd="20dp" />
+
+        <EditText
+            android:id="@+id/digit4"
+            android:layout_width="77dp"
+            android:layout_height="77dp"
+            android:background="@drawable/edit_text_background"
+            android:gravity="center"
+            android:inputType="number"
+            android:maxLength="1"
+            android:textSize="20sp" />
+
+    </LinearLayout>
+
+    <androidx.appcompat.widget.AppCompatButton
+        android:id="@+id/verify"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="34dp"
+        android:background="@drawable/button_background"
+        android:text="@string/verify"
+        android:textColor="@android:color/white"
+        android:textAllCaps="false"
+        android:textSize="16sp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/codeBoxesLayout" />
+
+    <LinearLayout
+        android:id="@+id/bottomTextViewsLayout"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:orientation="horizontal"
+        android:layout_marginTop="46dp"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/verify">
+
+        <TextView
+            android:id="@+id/textView1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="@string/send_code_again"
+            android:textSize="16sp"
+            android:fontFamily="@font/inter"
+            android:textStyle="bold"
+            android:layout_marginEnd="3dp"/>
+
+        <TextView
+            android:id="@+id/textView2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="00:20"
+            android:fontFamily="@font/inter"
+            android:textStyle="bold"
+            android:textSize="16sp" />
+
+    </LinearLayout>
+
+</androidx.constraintlayout.widget.ConstraintLayout>
