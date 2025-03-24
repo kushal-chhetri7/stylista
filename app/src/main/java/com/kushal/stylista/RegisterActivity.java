@@ -158,7 +158,6 @@ public class RegisterActivity extends AppCompatActivity {
     }
 
     private void signInWithGoogle() {
-        Log.d("GoogleSignIn", "Starting Google Sign-In");
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
