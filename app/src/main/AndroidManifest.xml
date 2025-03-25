@@ -57,7 +57,7 @@
             android:exported="true">
         </activity>
         <activity
-            android:name=".ForgotPasswordEmail"
+            android:name=".ForgotPasswordEmailActivity"
             android:exported="true">
         </activity>
         <activity
