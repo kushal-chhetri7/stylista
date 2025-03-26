@@ -57,15 +57,6 @@
             android:text="@string/check_mail_subtitle"
             android:textAppearance="@style/TextAppearance.AppCompat.Body1" />
 
-        <TextView
-            android:id="@+id/secondTextView"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Your Second Text"
-            android:textSize="14sp"
-            android:textStyle="bold"
-            android:layout_marginStart="8dp" />
-
     </LinearLayout>
 
     <LinearLayout
@@ -87,7 +78,9 @@
             android:inputType="number"
             android:maxLength="1"
             android:textSize="20sp"
-            android:layout_marginEnd="20dp" />
+            android:fontFamily="@font/inter"
+            android:textStyle="bold"
+            android:layout_marginEnd="10dp" />
 
         <EditText
             android:id="@+id/digit2"
@@ -98,7 +91,9 @@
             android:inputType="number"
             android:maxLength="1"
             android:textSize="20sp"
-            android:layout_marginEnd="20dp" />
+            android:fontFamily="@font/inter"
+            android:textStyle="bold"
+            android:layout_marginEnd="10dp" />
 
         <EditText
             android:id="@+id/digit3"
@@ -108,9 +103,10 @@
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
+            android:fontFamily="@font/inter"
             android:textStyle="bold"
-            android:textSize="32sp"
-            android:layout_marginEnd="20dp" />
+            android:textSize="20sp"
+            android:layout_marginEnd="10dp" />
 
         <EditText
             android:id="@+id/digit4"
@@ -120,7 +116,10 @@
             android:gravity="center"
             android:inputType="number"
             android:maxLength="1"
-            android:textSize="20sp" />
+            android:textSize="20sp"
+            android:fontFamily="@font/inter"
+            android:textStyle="bold"
+            android:layout_marginEnd="10dp"/>
 
     </LinearLayout>
 
