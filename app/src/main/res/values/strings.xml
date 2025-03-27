@@ -38,6 +38,18 @@
     <string name="password_changed">Password changed</string>
     <string name="password_changed_subtitle">Your password has been changed\nsuccessfully</string>
     <string name="back_to_login">Back to login</string>
+    <string-array name="gender_array">
+        <item></item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string name="profile_setup">Profile Setup</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="date_of_birth">DOB</string>
+    <string name="gender">Gender</string>
+    <string name="next">Next</string>
+
 
 
 
