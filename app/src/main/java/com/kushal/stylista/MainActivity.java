@@ -16,10 +16,17 @@ public class MainActivity extends AppCompatActivity {
         findViewById(R.id.btnInfo).setOnClickListener(v -> showDetailActivity());
 
         findViewById(R.id.image).setOnClickListener(v -> showDetailActivity());
+
+        findViewById(R.id.btnSetting).setOnClickListener(v -> showFavoriteList());
     }
 
     private void showDetailActivity(){
         Intent intent = new Intent(this, ClothDetailActivity.class);
+        startActivity(intent);
+    }
+
+    private void showFavoriteList(){
+        Intent intent = new Intent(this, FavoriteListActivity.class);
         startActivity(intent);
     }
 }

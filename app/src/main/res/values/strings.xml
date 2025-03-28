@@ -62,10 +62,9 @@ The tests for harmful fabrics concern substances that are prohibited or regulate
 The Öko-Tex 100 standard also guarantees protective measures to safeguard human health.
 
 </string>
-
-
-
-
+    <string name="favorites">Favorites</string>
+    <string name="add_to_cart">Add to cart</string>
+    <string name="price">$%.2f</string>
 
 
 </resources>
