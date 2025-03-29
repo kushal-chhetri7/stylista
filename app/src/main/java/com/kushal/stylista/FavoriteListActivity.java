@@ -14,6 +14,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kushal.stylista.adapter.FavoriteListAdapter;
 import com.kushal.stylista.model.FavoriteModel;
+import com.kushal.stylista.utils.DummyData;
 
 import java.util.ArrayList;
 
@@ -33,7 +34,7 @@ public class FavoriteListActivity extends AppCompatActivity {
             return insets;
         });
 
-        favoriteListAdapter = new FavoriteListAdapter(FavoriteModel.getDummyList());
+        favoriteListAdapter = new FavoriteListAdapter(DummyData.getFavoriteList());
         recyclerView = findViewById(R.id.listFavorite);
         recyclerView.setLayoutManager(new LinearLayoutManager(this));
         recyclerView.setAdapter(favoriteListAdapter);

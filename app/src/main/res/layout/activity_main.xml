@@ -46,16 +46,14 @@
         android:orientation="horizontal"
         app:layout_constraintGuide_percent="0.70" />
 
-    <androidx.appcompat.widget.AppCompatImageView
-        android:id="@+id/image"
+   <com.yuyakaido.android.cardstackview.CardStackView
+       android:id="@+id/swipeCardStack"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_marginTop="16dp"
-        android:background="@drawable/rounded_shadow_bg"
-        android:src="@drawable/sample_cloth"
-        app:layout_constraintBottom_toTopOf="@id/gl70h"
-        app:layout_constraintTop_toBottomOf="@id/btnSetting" />
-
+       android:layout_height="0dp"
+       android:layout_marginTop="16dp"
+       app:layout_constraintBottom_toTopOf="@id/gl70h"
+       app:layout_constraintTop_toBottomOf="@id/btnSetting"
+       />
 
     <TextView
         android:id="@+id/category"
@@ -70,11 +68,23 @@
     <TextView
         android:id="@+id/title"
         style="@style/clothName"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:text="Black Crew Neck T-shirt"
+        tools:text="Black Crew Neck T-shirt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/category" />
+
+    <TextView
+        android:id="@+id/tvPrice"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="4dp"
+        tools:text="$1000000"
+        android:textFontWeight="600"
+        android:textSize="16sp"
+        app:flow_verticalAlign="center"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@id/title" />
 
 
     <androidx.constraintlayout.widget.ConstraintLayout

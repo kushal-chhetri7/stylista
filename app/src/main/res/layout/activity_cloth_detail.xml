@@ -84,7 +84,7 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                android:text="$100"
+                tools:text="$100"
                 android:textFontWeight="700"
                 android:textSize="25sp"
                 app:flow_verticalAlign="center"
@@ -92,6 +92,7 @@
                 app:layout_constraintTop_toBottomOf="@id/title" />
 
             <TextView
+                android:id="@+id/tvDescription"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
