@@ -49,6 +49,12 @@
     <string name="date_of_birth">DOB</string>
     <string name="gender">Gender</string>
     <string name="next">Next</string>
+    <string name="preferences">Your preference</string>
+    <string name="five_options">Choose up to 5</string>
+    <string name="skip">Skip</string>
+    <string name="start">Start</string>
+
+
 
 
 

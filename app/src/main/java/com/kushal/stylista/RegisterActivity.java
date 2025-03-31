@@ -1,4 +1,5 @@
 package com.kushal.stylista;
+
 import android.content.Intent;
 import android.graphics.Typeface;
 import android.os.Bundle;
@@ -20,7 +21,6 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import com.facebook.AccessToken;
 import com.facebook.CallbackManager;
-
 import com.facebook.FacebookCallback;
 import com.facebook.FacebookException;
 import com.facebook.FacebookSdk;
@@ -35,13 +35,11 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.AuthCredential;
-
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
 
 import java.util.Arrays;
-
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -55,12 +53,15 @@ public class RegisterActivity extends AppCompatActivity {
     private GoogleSignInClient googleSignInClient;
     private CallbackManager callbackManager;
     private static final int RC_SIGN_IN = 9001;
+    private FirebaseAuth mAuth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         FacebookSdk.sdkInitialize(getApplicationContext());
         setContentView(R.layout.activity_register);
+
+        mAuth = FirebaseAuth.getInstance();
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -72,19 +73,12 @@ public class RegisterActivity extends AppCompatActivity {
         googleButton = findViewById(R.id.googleButton);
         tvLogin = findViewById(R.id.tvLogin);
 
-        // Configure Google Sign-In
         configureGoogleSignIn();
-
-        // Configure Facebook Sign-In
         configureFacebookSignIn();
 
-        // Google Button Click Listener
         googleButton.setOnClickListener(v -> signInWithGoogle());
-
-        // Facebook Button Click Listener
         facebookButton.setOnClickListener(v -> LoginManager.getInstance().logInWithReadPermissions(this, Arrays.asList("email", "public_profile")));
 
-        // Register Button Click Listener
         registerButton.setOnClickListener(v -> {
             String emailText = email.getText().toString().trim();
             String passwordText = password.getText().toString().trim();
@@ -94,36 +88,32 @@ public class RegisterActivity extends AppCompatActivity {
                 email.setError("Email is required");
                 return;
             }
-
             if (passwordText.isEmpty()) {
                 passwordLayout.setError("Password is required");
                 return;
             }
-
             if (confirmPasswordText.isEmpty()) {
                 confirmPasswordLayout.setError("Confirm Password is required");
                 return;
             }
-
             if (!passwordText.equals(confirmPasswordText)) {
                 confirmPasswordLayout.setError("Passwords do not match");
                 return;
             }
 
-            FirebaseAuth.getInstance().createUserWithEmailAndPassword(emailText, passwordText)
+            mAuth.createUserWithEmailAndPassword(emailText, passwordText)
                     .addOnCompleteListener(task -> {
                         if (task.isSuccessful()) {
                             Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
+                            redirectToProfileSetup(emailText);
                         } else {
                             Toast.makeText(RegisterActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                         }
                     });
         });
 
-        // "Log In" Text Click Listener
         String fullText = "Already have an account? Log in";
         SpannableString spannableString = new SpannableString(fullText);
-
         StyleSpan boldSpan = new StyleSpan(Typeface.BOLD);
         int startIndex = fullText.indexOf("Log in");
         int endIndex = startIndex + "Log in".length();
@@ -153,12 +143,10 @@ public class RegisterActivity extends AppCompatActivity {
                 .requestIdToken(getString(R.string.default_web_client_id))
                 .requestEmail()
                 .build();
-
         googleSignInClient = GoogleSignIn.getClient(this, gso);
     }
 
     private void signInWithGoogle() {
-        Log.d("GoogleSignIn", "Starting Google Sign-In");
         Intent signInIntent = googleSignInClient.getSignInIntent();
         startActivityForResult(signInIntent, RC_SIGN_IN);
     }
@@ -186,8 +174,6 @@ public class RegisterActivity extends AppCompatActivity {
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        Log.d("GoogleSignIn", "onActivityResult called with requestCode: " + requestCode);
-
         if (requestCode == RC_SIGN_IN) {
             Task<GoogleSignInAccount> task = GoogleSignIn.getSignedInAccountFromIntent(data);
             try {
@@ -197,16 +183,17 @@ public class RegisterActivity extends AppCompatActivity {
                 Toast.makeText(this, "Google sign in failed: " + e.getMessage(), Toast.LENGTH_SHORT).show();
             }
         }
-
         callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
     private void firebaseAuthWithGoogle(String idToken) {
         AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
-        FirebaseAuth.getInstance().signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Google sign in successful!", Toast.LENGTH_SHORT).show();
+                        String emailText = mAuth.getCurrentUser().getEmail();
+                        redirectToProfileSetup(emailText);
                     } else {
                         Toast.makeText(this, "Google sign in failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -215,13 +202,23 @@ public class RegisterActivity extends AppCompatActivity {
 
     private void firebaseAuthWithFacebook(AccessToken token) {
         AuthCredential credential = FacebookAuthProvider.getCredential(token.getToken());
-        FirebaseAuth.getInstance().signInWithCredential(credential)
+        mAuth.signInWithCredential(credential)
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Facebook sign in successful!", Toast.LENGTH_SHORT).show();
+                        String emailText = mAuth.getCurrentUser().getEmail();
+                        redirectToProfileSetup(emailText);
                     } else {
                         Toast.makeText(this, "Facebook sign in failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
                 });
+    }
+
+    private void redirectToProfileSetup(String email) {
+        Intent intent = new Intent(RegisterActivity.this, ProfileSetupActivity.class);
+        intent.putExtra("email", email);
+        intent.putExtra("uid", mAuth.getCurrentUser().getUid());
+        startActivity(intent);
+        finish();
     }
 }
