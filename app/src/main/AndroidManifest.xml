@@ -65,6 +65,14 @@
             android:name=".EmailFourDigitCode"
             android:exported="true" />
         <activity
+
+            android:name=".ProfileSetupActivity"
+            android:exported="true">
+        </activity>
+        <activity
+            android:name=".ClothPreferenceActivity"
+            android:exported="true">
+        </activity>
             android:name=".RegisterActivity"
             android:exported="true" />
 <!--        <activity-->
@@ -77,7 +85,6 @@
         <activity
             android:name=".FavoriteListActivity"
             android:exported="false" />
-
     </application>
 
 </manifest>
