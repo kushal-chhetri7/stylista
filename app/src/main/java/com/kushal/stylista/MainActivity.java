@@ -1,12 +1,15 @@
 package com.kushal.stylista;
 
+import static android.view.View.GONE;
+import static android.view.View.VISIBLE;
+
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.view.animation.AccelerateInterpolator;
 import android.view.animation.LinearInterpolator;
-import android.widget.Button;
+import android.widget.ProgressBar;
 import android.widget.TextView;
 
 import androidx.annotation.Nullable;
@@ -15,7 +18,10 @@ import androidx.appcompat.widget.AppCompatImageButton;
 
 import com.kushal.stylista.adapter.SwipeCardStackAdapter;
 import com.kushal.stylista.model.ClothModel;
-import com.kushal.stylista.utils.DummyData;
+import com.kushal.stylista.services.ApiListResponseCallback;
+import com.kushal.stylista.services.ClothRepository;
+import com.kushal.stylista.utils.SnackbarHelper;
+import com.kushal.stylista.utils.SnackbarType;
 import com.yuyakaido.android.cardstackview.CardStackLayoutManager;
 import com.yuyakaido.android.cardstackview.CardStackListener;
 import com.yuyakaido.android.cardstackview.CardStackView;
@@ -25,15 +31,22 @@ import com.yuyakaido.android.cardstackview.StackFrom;
 import com.yuyakaido.android.cardstackview.SwipeAnimationSetting;
 import com.yuyakaido.android.cardstackview.SwipeableMethod;
 
+import java.util.ArrayList;
+import java.util.List;
+
 
 public class MainActivity extends AppCompatActivity implements CardStackListener {
     public static final String TAG = MainActivity.class.getSimpleName();
+    List<ClothModel> clothModelList = new ArrayList<>();
+    ClothRepository repository = new ClothRepository();
     private CardStackView cardStackView;
     private SwipeCardStackAdapter swipeCardStackAdapter;
     private CardStackLayoutManager cardStackLayoutManager;
     private AppCompatImageButton btnUndo, btnReject, btnInfo, btnFavorite, btnAddToCart;
-
     private TextView categoryTextView, titleTextView, priceTextView;
+    private ProgressBar progressBar;
+    private List<String> favorites = new ArrayList<>();
+    private ClothModel currentCloth;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -46,7 +59,7 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
         cardStackView = findViewById(R.id.swipeCardStack);
         Log.e(TAG, "onCreate: view set");
-       initializeSwipeCard();
+        initializeSwipeCard();
         Log.e(TAG, "onCreate: swipe card set");
 
 
@@ -60,16 +73,22 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         btnFavorite = findViewById(R.id.btnFavorite);
         btnAddToCart = findViewById(R.id.btnAddToCart);
 
+        progressBar = findViewById(R.id.progressBar);
+
         btnUndo.setOnClickListener(v -> onUndoClicked());
         btnReject.setOnClickListener(v -> onRejectClicked());
         btnFavorite.setOnClickListener(v -> onFavoriteClicked());
         btnInfo.setOnClickListener(v -> showDetailActivity());
         btnAddToCart.setOnClickListener(v -> onAddToCartClicked());
+        progressBar.setVisibility(VISIBLE);
+        fetchFavoriteList();
+        fetchData();
     }
 
-    private void initializeSwipeCard(){
+
+    private void initializeSwipeCard() {
         cardStackLayoutManager = new CardStackLayoutManager(this, this);
-        swipeCardStackAdapter = new SwipeCardStackAdapter(DummyData.getDummyClothes());
+        swipeCardStackAdapter = new SwipeCardStackAdapter(clothModelList);
         cardStackLayoutManager.setStackFrom(StackFrom.Top);
         cardStackLayoutManager.setVisibleCount(3);
         cardStackLayoutManager.setTranslationInterval(8.0f);
@@ -86,12 +105,44 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     }
 
-    private void showDetailActivity(){
-        Intent intent = new Intent(this, ClothDetailActivity.class);
-        startActivity(intent);
+    private void fetchFavoriteList() {
+        repository.getFavoriteClothesId(new ApiListResponseCallback<String>() {
+            @Override
+            public void onSuccess(List<String> clothes) {
+                favorites = clothes;
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+
+            }
+        });
     }
 
-    private void showFavoriteList(){
+    private void fetchData() {
+
+        repository.getClothes(new ApiListResponseCallback<ClothModel>() {
+            @Override
+            public void onSuccess(List<ClothModel> clothes) {
+                for (ClothModel cloth : clothes) {
+                    cloth.setFavorite(favorites.contains(cloth.getId()));
+                }
+                progressBar.setVisibility(GONE);
+                swipeCardStackAdapter.setClothModelList(clothes);
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                progressBar.setVisibility(GONE);
+            }
+        });
+    }
+
+    private void showDetailActivity() {
+        ClothDetailActivity.start(this, currentCloth);
+    }
+
+    private void showFavoriteList() {
         Intent intent = new Intent(this, FavoriteListActivity.class);
         startActivity(intent);
     }
@@ -106,30 +157,30 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     private void onFavoriteClicked() {
         swipeCard(Direction.Top);
-
+        addToFavorite();
     }
 
     private void onAddToCartClicked() {
         swipeCard(Direction.Right);
     }
 
-    private void swipeCard(Direction direction){
-        SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder()
-                .setDirection(direction)
-                .setDuration(Duration.Normal.duration)
-                .setInterpolator(new AccelerateInterpolator())
-                .build();
+
+    private void swipeCard(Direction direction) {
+        SwipeAnimationSetting setting = new SwipeAnimationSetting.Builder().setDirection(direction).setDuration(Duration.Normal.duration).setInterpolator(new AccelerateInterpolator()).build();
         cardStackLayoutManager.setSwipeAnimationSetting(setting);
         cardStackView.swipe();
     }
 
     @Override
     public void onCardAppeared(@Nullable View view, int i) {
-        Log.e(TAG, "onCardAppeared: "+ i);
-        ClothModel clothModel = swipeCardStackAdapter.getClothModelList().get(i);
-        categoryTextView.setText(clothModel.getCategory());
-        titleTextView.setText(clothModel.getName());
-        priceTextView.setText(getString(R.string.price, clothModel.getPrice()));
+        Log.e(TAG, "onCardAppeared: " + i);
+        currentCloth = swipeCardStackAdapter.getClothModelList().get(i);
+
+        categoryTextView.setText(currentCloth.getCategory());
+        titleTextView.setText(currentCloth.getName());
+        priceTextView.setText(getString(R.string.price, currentCloth.getPrice()));
+
+        btnFavorite.setImageResource(favorites.contains(currentCloth.getId()) ?  R.drawable.ic_favorite:R.drawable.ic_favorite_outline);
     }
 
     @Override
@@ -139,7 +190,7 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     @Override
     public void onCardSwiped(@Nullable Direction direction) {
-        Log.e(TAG, "onCardSwiped: "+ direction);
+        Log.e(TAG, "onCardSwiped: " + direction);
     }
 
     @Override
@@ -154,10 +205,30 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     @Override
     public void onCardDisappeared(@Nullable View view, int i) {
-        if(i == swipeCardStackAdapter.getItemCount()-1) {
+        if (i == swipeCardStackAdapter.getItemCount() - 1) {
             categoryTextView.setText("");
             titleTextView.setText("");
             priceTextView.setText("");
+            currentCloth = null;
         }
     }
+
+    private void addToFavorite() {
+        if (currentCloth != null) {
+            repository.updateFavoriteCloth(currentCloth.getId(), new ApiSaveResponseCallback() {
+                @Override
+                public void onSuccess() {
+                    favorites.add(currentCloth.getId());
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    exception.printStackTrace();
+                    SnackbarHelper.showSnackbar(findViewById(android.R.id.content), exception.getMessage(), SnackbarType.ERROR);
+                    onUndoClicked();
+                }
+            });
+        }
+    }
+
 }

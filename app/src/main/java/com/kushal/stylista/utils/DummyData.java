@@ -24,11 +24,18 @@ public class DummyData {
         }
         return dummyList;
     }
+
+    public static String getDummyImage(){
+        return images[(int) (Math.random() * images.length)];
+    }
+
     public static List<ClothModel> getDummyClothes() {
         List<ClothModel> clothes = new ArrayList<>();
 
         String[] names = {"Denim Jacket", "Cotton T-Shirt", "Slim Fit Chinos", "Summer Dress", "Ankle Boots"};
         String[] categories = {"Jackets", "T-Shirts", "Pants", "Dresses", "Footwear"};
+        String[] subcategories = {"Men", "Unisex", "Men", "Women", "Unisex"};
+        String[] brands = {"UrbanStyle", "CottonKing", "FitWear", "FloralGrace", "BootMasters"};
         double[] prices = {59.99, 19.99, 39.99, 49.99, 89.99};
         String[] descriptions = {
                 "Stylish denim jacket, great for all seasons.",
@@ -53,19 +60,62 @@ public class DummyData {
                 Arrays.asList("7", "8", "9", "10", "11")
         );
 
+        List<List<String>> materialsList = Arrays.asList(
+                Arrays.asList("Denim", "Cotton"),
+                Arrays.asList("Cotton", "Polyester"),
+                Arrays.asList("Cotton", "Spandex"),
+                Arrays.asList("Polyester", "Floral Print"),
+                Arrays.asList("Leather", "Rubber Sole")
+        );
+
+        List<List<String>> tagsList = Arrays.asList(
+                Arrays.asList("casual", "denim", "winter"),
+                Arrays.asList("soft", "comfortable", "casual"),
+                Arrays.asList("slim-fit", "chinos", "comfortable"),
+                Arrays.asList("summer", "floral", "dress"),
+                Arrays.asList("footwear", "leather", "boots")
+        );
+
         for (int i = 0; i < names.length; i++) {
-            clothes.add(new ClothModel(
-                    String.valueOf(i + 1),  // ID as a string
-                    names[i],
-                    categories[i],
-                    prices[i],
-                    descriptions[i],
-                    images[i%images.length],
-                    new ArrayList<>(colorsList.get(i)),
-                    new ArrayList<>(sizesList.get(i))
-            ));
+            ClothModel cloth = new ClothModel();
+
+            cloth.setId(String.valueOf(i + 1));  // ID as a string
+            cloth.setName(names[i]);
+            cloth.setCategory(categories[i]);
+            cloth.setSubcategory(subcategories[i]);
+            cloth.setBrand(brands[i]);
+            cloth.setPrice(prices[i]);
+            cloth.setDescription(descriptions[i]);
+            cloth.setMaterials(new ArrayList<>(materialsList.get(i)));
+            cloth.setTags(new ArrayList<>(tagsList.get(i)));
+
+            List<ClothModel.Color> colors = new ArrayList<>();
+            List<String> colorNames = colorsList.get(i);
+            for (String colorName : colorNames) {
+                ClothModel.Color color = new ClothModel.Color();
+                color.setName(colorName);
+                color.setHex("#000000"); // Default color for now
+                color.setImages(Arrays.asList("https://example.com/images/" + colorName.toLowerCase() + "-front.jpg"));
+
+                // Set sizes (Example: stock is randomly set for now)
+                List<ClothModel.Size> sizes = new ArrayList<>();
+                for (String size : sizesList.get(i)) {
+                    ClothModel.Size sizeObj = new ClothModel.Size();
+                    sizeObj.setSize(size);
+                    sizeObj.setStock((int) (Math.random() * 20) + 1); // Random stock between 1 and 20
+                    sizes.add(sizeObj);
+                }
+                color.setSizes(sizes);
+
+                colors.add(color);
+            }
+
+            cloth.setColors(colors);
+
+            clothes.add(cloth);
         }
 
         return clothes;
     }
+
 }

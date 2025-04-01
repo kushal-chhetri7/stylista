@@ -12,7 +12,6 @@
         android:layout_height="match_parent">
 
         <androidx.constraintlayout.widget.ConstraintLayout
-
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:padding="16dp">
@@ -22,7 +21,7 @@
                 android:id="@+id/image"
                 android:layout_width="match_parent"
                 android:layout_height="400dp"
-                android:layout_marginTop="16dp"
+                android:layout_marginTop="56dp"
                 android:src="@drawable/sample_cloth"
                 app:layout_constraintTop_toTopOf="parent" />
 
@@ -84,12 +83,12 @@
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="16dp"
-                tools:text="$100"
                 android:textFontWeight="700"
                 android:textSize="25sp"
                 app:flow_verticalAlign="center"
                 app:layout_constraintEnd_toEndOf="parent"
-                app:layout_constraintTop_toBottomOf="@id/title" />
+                app:layout_constraintTop_toBottomOf="@id/title"
+                tools:text="$100" />
 
             <TextView
                 android:id="@+id/tvDescription"
@@ -127,7 +126,7 @@
         android:src="@drawable/ic_favorite_outline" />
 
     <androidx.appcompat.widget.AppCompatButton
-        android:id="@+id/login"
+        android:id="@+id/btnAddToCart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_gravity="bottom"
