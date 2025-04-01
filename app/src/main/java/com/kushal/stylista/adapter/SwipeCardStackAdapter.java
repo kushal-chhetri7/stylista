@@ -15,6 +15,7 @@ import com.bumptech.glide.load.resource.bitmap.CenterCrop;
 import com.bumptech.glide.load.resource.bitmap.RoundedCorners;
 import com.kushal.stylista.R;
 import com.kushal.stylista.model.ClothModel;
+import com.kushal.stylista.utils.DummyData;
 
 import java.util.List;
 
@@ -38,7 +39,7 @@ public class SwipeCardStackAdapter extends RecyclerView.Adapter<SwipeCardStackAd
     public void onBindViewHolder(@NonNull ViewHolder holder, int position) {
 //       holder.image.setImageDrawable(holder.itemView.getContext().getDrawable(R.drawable.sample_cloth));
         Glide.with(holder.itemView.getContext())
-                .load(clothModelList.get(position).getImageUrl())
+                .load(DummyData.getDummyImage())
                 .transform(new CenterCrop(), new RoundedCorners(32))
                 .into(holder.image);
 
@@ -51,6 +52,7 @@ public class SwipeCardStackAdapter extends RecyclerView.Adapter<SwipeCardStackAd
 
     public void setClothModelList(List<ClothModel> clothModelList) {
         this.clothModelList = clothModelList;
+        notifyDataSetChanged();
     }
 
     public List<ClothModel> getClothModelList() {

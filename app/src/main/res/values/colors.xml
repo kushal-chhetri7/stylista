@@ -4,4 +4,9 @@
     <color name="white">#FFFFFFFF</color>
     <color name="transparent">#00FFFFFF</color>
 
+    <color name="snackbar_general_bg">#323232</color>
+    <color name="snackbar_success_bg">#4CAF50</color>
+    <color name="snackbar_error_bg">#F44336</color>
+
+    <color name="snackbar_text_color">#FFFFFF</color>
 </resources>

@@ -34,6 +34,7 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
+import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
@@ -62,7 +63,6 @@ public class LoginActivity extends AppCompatActivity {
         // Initialize Facebook SDK
         FacebookSdk.sdkInitialize(getApplicationContext());
         AppEventsLogger.activateApp(getApplication());
-
         FirebaseAuth.getInstance().signOut(); // Optional: Clear previous sessions
 
         email = findViewById(R.id.email);

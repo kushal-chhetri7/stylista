@@ -8,6 +8,15 @@
     android:fitsSystemWindows="true"
     tools:context=".MainActivity">
 
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintBottom_toBottomOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
     <androidx.appcompat.widget.AppCompatImageButton
         android:id="@+id/btnSetting"
         android:layout_width="wrap_content"
@@ -58,10 +67,10 @@
     <TextView
         android:id="@+id/category"
         style="@style/category"
-        android:layout_width="wrap_content"
+        android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:layout_marginTop="16dp"
-        android:text="Men's T-Shirt"
+        tools:text="Men's T-Shirt"
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@id/gl70h" />
 
@@ -176,7 +185,8 @@
             android:elevation="8dp"
             android:padding="18dp"
             android:scaleType="centerInside"
-            android:src="@drawable/ic_favorite"
+            android:src="@drawable/ic_favorite_outline"
+            android:tint="#3CDBA7"
             app:layout_constraintEnd_toStartOf="@id/gl_v80"
             app:layout_constraintStart_toEndOf="@id/gl_v60"
             app:layout_constraintTop_toTopOf="parent" />
