@@ -4,17 +4,20 @@ import android.content.Intent;
 import android.os.Bundle;
 import android.text.Editable;
 import android.text.TextWatcher;
-import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Toast;
-
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
-
 import com.google.android.material.textfield.TextInputLayout;
 import com.google.firebase.auth.FirebaseAuth;
+import com.google.firebase.firestore.FirebaseFirestore;
+import java.security.MessageDigest;
+import java.nio.charset.StandardCharsets;
+import java.math.BigInteger;
+import java.util.HashMap;
+import java.util.Map;
 
 public class ResetPassword extends AppCompatActivity {
 
@@ -23,6 +26,7 @@ public class ResetPassword extends AppCompatActivity {
     private Button resetButton;
     private ImageView backButton;
     private String email;
+    private FirebaseFirestore db;
     private FirebaseAuth mAuth;
 
     @Override
@@ -31,10 +35,12 @@ public class ResetPassword extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_resetpassword);
 
+        db = FirebaseFirestore.getInstance();
         mAuth = FirebaseAuth.getInstance();
 
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
+        String verificationCode = intent.getStringExtra("code");
 
         newPasswordEditText = findViewById(R.id.newPassword);
         confirmPasswordEditText = findViewById(R.id.confirmNewPassword);
@@ -45,7 +51,7 @@ public class ResetPassword extends AppCompatActivity {
 
         setupPasswordValidation();
 
-        resetButton.setOnClickListener(v -> resetPassword());
+        resetButton.setOnClickListener(v -> resetPassword(verificationCode));
 
         backButton.setOnClickListener(v -> onBackPressed());
     }
@@ -95,7 +101,7 @@ public class ResetPassword extends AppCompatActivity {
         });
     }
 
-    private void resetPassword() {
+    private void resetPassword(String verificationCode) {
         String newPassword = newPasswordEditText.getText().toString().trim();
         String confirmPassword = confirmPasswordEditText.getText().toString().trim();
 
@@ -118,25 +124,75 @@ public class ResetPassword extends AppCompatActivity {
             return;
         }
 
-        mAuth.fetchSignInMethodsForEmail(email)
-                .addOnCompleteListener(task -> {
-                    if (task.isSuccessful()) {
-                        mAuth.getCurrentUser().updatePassword(newPassword)
-                                .addOnCompleteListener(updateTask -> {
-                                    if (updateTask.isSuccessful()) {
-                                        Toast.makeText(ResetPassword.this, "Password reset successfully", Toast.LENGTH_SHORT).show();
+        // Verify the code from Firestore
+        db.collection("verificationCodes").document(email)
+                .get()
+                .addOnSuccessListener(documentSnapshot -> {
+                    if (documentSnapshot.exists()) {
+                        String storedCode = documentSnapshot.getString("code");
 
-                                        Intent successIntent = new Intent(ResetPassword.this, PasswordChangedSuccess.class);
+                        if (storedCode != null && storedCode.equals(verificationCode)) {
+                            // Hash the password for security
+                            String hashedPassword = hashPassword(newPassword);
+
+                            // Create a new document in a password-reset collection
+                            // This approach allows you to store password reset information without
+                            // needing to directly query the users collection
+                            Map<String, Object> resetData = new HashMap<>();
+                            resetData.put("email", email);
+                            resetData.put("newPassword", hashedPassword);
+                            resetData.put("timestamp", System.currentTimeMillis());
+                            resetData.put("completed", false);
+
+                            db.collection("passwordResets").document()
+                                    .set(resetData)
+                                    .addOnSuccessListener(aVoid -> {
+                                        Toast.makeText(ResetPassword.this,
+                                                "Password reset request submitted successfully",
+                                                Toast.LENGTH_SHORT).show();
+
+                                        // Delete the verification code
+                                        db.collection("verificationCodes").document(email).delete();
+
+                                        Intent successIntent = new Intent(ResetPassword.this,
+                                                PasswordChangedSuccess.class);
                                         startActivity(successIntent);
                                         finish();
-                                    } else {
-                                        Toast.makeText(ResetPassword.this, "Password reset failed: " + updateTask.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                                    }
-                                });
+                                    })
+                                    .addOnFailureListener(e -> {
+                                        Toast.makeText(ResetPassword.this,
+                                                "Failed to submit password reset: " + e.getMessage(),
+                                                Toast.LENGTH_SHORT).show();
+                                    });
+                        } else {
+                            Toast.makeText(ResetPassword.this, "Invalid verification code", Toast.LENGTH_SHORT).show();
+                        }
                     } else {
-                        Toast.makeText(ResetPassword.this, "Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                        Toast.makeText(ResetPassword.this, "Verification code not found", Toast.LENGTH_SHORT).show();
                     }
+                })
+                .addOnFailureListener(e -> {
+                    Toast.makeText(ResetPassword.this, "Error: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                 });
+    }
+
+    private String hashPassword(String password) {
+        try {
+            MessageDigest md = MessageDigest.getInstance("SHA-256");
+            byte[] hash = md.digest(password.getBytes(StandardCharsets.UTF_8));
+            BigInteger number = new BigInteger(1, hash);
+            StringBuilder hexString = new StringBuilder(number.toString(16));
+
+            // Pad with leading zeros
+            while (hexString.length() < 64) {
+                hexString.insert(0, '0');
+            }
+
+            return hexString.toString();
+        } catch (Exception e) {
+            e.printStackTrace();
+            return password;
+        }
     }
 
     @Override
