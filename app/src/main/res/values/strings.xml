@@ -26,7 +26,7 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="forgot_password_subtitle">Don’t worry! It happens. Please enter the email associated with your account.</string>
     <string name="enter_your_email_address">Enter your email address</string>
-    <string name="send_code">Send code</string>
+    <string name="send_verification_link">Send verification link</string>
     <string name="verify">Verify</string>
     <string name="reset_password">Reset password</string>
     <string name="remember_password">Remember password? Log in</string>

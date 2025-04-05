@@ -38,8 +38,21 @@ import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Arrays;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Random;
+import java.util.Properties;
+
+import javax.mail.Message;
+import javax.mail.MessagingException;
+import javax.mail.PasswordAuthentication;
+import javax.mail.Session;
+import javax.mail.Transport;
+import javax.mail.internet.InternetAddress;
+import javax.mail.internet.MimeMessage;
 
 public class RegisterActivity extends AppCompatActivity {
 
@@ -54,6 +67,8 @@ public class RegisterActivity extends AppCompatActivity {
     private CallbackManager callbackManager;
     private static final int RC_SIGN_IN = 9001;
     private FirebaseAuth mAuth;
+    private FirebaseFirestore db;
+    private String verificationCode;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -62,6 +77,7 @@ public class RegisterActivity extends AppCompatActivity {
         setContentView(R.layout.activity_register);
 
         mAuth = FirebaseAuth.getInstance();
+        db = FirebaseFirestore.getInstance();
 
         email = findViewById(R.id.email);
         password = findViewById(R.id.password);
@@ -101,14 +117,55 @@ public class RegisterActivity extends AppCompatActivity {
                 return;
             }
 
-            mAuth.createUserWithEmailAndPassword(emailText, passwordText)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(RegisterActivity.this, "Registration successful!", Toast.LENGTH_SHORT).show();
-                            redirectToProfileSetup(emailText);
-                        } else {
-                            Toast.makeText(RegisterActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
+            // Generate Verification Code
+            verificationCode = generateVerificationCode();
+
+            // Store Verification Code in Firestore
+            Map<String, Object> codeData = new HashMap<>();
+            codeData.put("code", verificationCode);
+            codeData.put("email", emailText);
+
+            db.collection("verificationCodes").document(emailText)
+                    .set(codeData)
+                    .addOnSuccessListener(aVoid -> {
+                        mAuth.createUserWithEmailAndPassword(emailText, passwordText)
+                                .addOnCompleteListener(task -> {
+                                    if (task.isSuccessful()) {
+                                        // Send Verification Email
+                                        new Thread(() -> {
+                                            try {
+                                                sendVerificationEmail(emailText, verificationCode);
+                                                runOnUiThread(() -> {
+                                                    Toast.makeText(RegisterActivity.this, "Verification code sent!", Toast.LENGTH_SHORT).show();
+                                                    // Redirect to Verification Activity
+                                                    Intent intent = new Intent(RegisterActivity.this, EmailFourDigitCode.class);
+                                                    intent.putExtra("email", emailText);
+                                                    intent.putExtra("code", verificationCode);
+                                                    startActivity(intent);
+                                                    finish();
+                                                });
+
+                                            } catch (MessagingException e) {
+                                                runOnUiThread(() -> {
+                                                    Toast.makeText(RegisterActivity.this, "Failed to send verification email: " + e.getMessage(), Toast.LENGTH_SHORT).show();
+                                                    Log.e("MyAppError", e.getMessage());
+                                                });
+
+                                                // Optionally, consider deleting the user if email fails
+                                                mAuth.getCurrentUser().delete();
+                                                db.collection("verificationCodes").document(emailText).delete();
+
+                                            }
+                                        }).start();
+
+                                    } else {
+                                        Toast.makeText(RegisterActivity.this, "Registration failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
+                                        db.collection("verificationCodes").document(emailText).delete();
+                                    }
+                                });
+                    })
+                    .addOnFailureListener(e -> {
+                        Toast.makeText(RegisterActivity.this, "Failed to store verification code: " + e.getMessage(), Toast.LENGTH_SHORT).show();
                     });
         });
 
@@ -136,6 +193,43 @@ public class RegisterActivity extends AppCompatActivity {
 
         tvLogin.setText(spannableString);
         tvLogin.setMovementMethod(LinkMovementMethod.getInstance());
+    }
+
+    private String generateVerificationCode() {
+        Random random = new Random();
+        int code = 1000 + random.nextInt(9000);
+        return String.valueOf(code);
+    }
+
+    private void sendVerificationEmail(String email, String code) throws MessagingException {
+        final String username = "chhetrikushal14@gmail.com";
+        final String password = "yavqxznvpsqzhnph";
+
+        Properties props = new Properties();
+        props.put("mail.smtp.auth", "true");
+        props.put("mail.smtp.starttls.enable", "true");
+        props.put("mail.smtp.host", "smtp.gmail.com");
+        props.put("mail.smtp.port", "587");
+        props.put("mail.smtp.ssl.trust", "smtp.gmail.com");
+
+        Session session = Session.getInstance(props, new javax.mail.Authenticator() {
+            protected PasswordAuthentication getPasswordAuthentication() {
+                return new PasswordAuthentication(username, password);
+            }
+        });
+
+        try {
+            Message message = new MimeMessage(session);
+            message.setFrom(new InternetAddress(username));
+            message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
+            message.setSubject("Your Verification Code");
+            message.setText("Your verification code is: " + code +
+                    "\n\nPlease use this code to verify your email.");
+
+            Transport.send(message);
+        } catch (MessagingException e) {
+            throw new MessagingException("Email sending failed: " + e.getMessage(), e);
+        }
     }
 
     private void configureGoogleSignIn() {
@@ -192,8 +286,8 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Google sign in successful!", Toast.LENGTH_SHORT).show();
-                        String emailText = mAuth.getCurrentUser().getEmail();
-                        redirectToProfileSetup(emailText);
+                          String emailText = mAuth.getCurrentUser().getEmail();
+                          redirectToProfileSetup(emailText);
                     } else {
                         Toast.makeText(this, "Google sign in failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }
@@ -206,8 +300,7 @@ public class RegisterActivity extends AppCompatActivity {
                 .addOnCompleteListener(this, task -> {
                     if (task.isSuccessful()) {
                         Toast.makeText(this, "Facebook sign in successful!", Toast.LENGTH_SHORT).show();
-                        String emailText = mAuth.getCurrentUser().getEmail();
-                        redirectToProfileSetup(emailText);
+                        Intent intent = new Intent(RegisterActivity.this, ProfileSetupActivity.class);
                     } else {
                         Toast.makeText(this, "Facebook sign in failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
                     }

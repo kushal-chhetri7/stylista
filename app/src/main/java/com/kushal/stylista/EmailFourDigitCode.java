@@ -5,6 +5,7 @@ import android.os.Bundle;
 import android.os.CountDownTimer;
 import android.text.Editable;
 import android.text.TextWatcher;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.EditText;
@@ -14,6 +15,7 @@ import android.widget.Toast;
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
+import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.util.Properties;
@@ -34,14 +36,13 @@ public class EmailFourDigitCode extends AppCompatActivity {
     private TextView resendTextView;
     private String email, originalCode;
     private FirebaseFirestore db;
+    private FirebaseAuth mAuth; // Add FirebaseAuth
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_emailfourdigitcode);
-
-
 
         timerTextView = findViewById(R.id.textView2);
         digit1 = findViewById(R.id.digit1);
@@ -51,23 +52,16 @@ public class EmailFourDigitCode extends AppCompatActivity {
         verifyButton = findViewById(R.id.verify);
         resendTextView = findViewById(R.id.textView1);
         db = FirebaseFirestore.getInstance();
-
+        mAuth = FirebaseAuth.getInstance(); // Initialize FirebaseAuth
 
         Intent intent = getIntent();
         email = intent.getStringExtra("email");
         originalCode = intent.getStringExtra("code");
 
-
-
-
         startCountdownTimer();
-
-
         setupCodeInput();
 
-
         verifyButton.setOnClickListener(v -> verifyCode());
-
 
         resendTextView.setOnClickListener(v -> {
             if (resendTextView.getText().toString().equals("Resend")) {
@@ -95,10 +89,12 @@ public class EmailFourDigitCode extends AppCompatActivity {
     private void setupCodeInput() {
         TextWatcher textWatcher = new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence s, int start, int count, int after) {}
+            public void beforeTextChanged(CharSequence s, int start, int count, int after) {
+            }
 
             @Override
-            public void onTextChanged(CharSequence s, int start, int before, int count) {}
+            public void onTextChanged(CharSequence s, int start, int before, int count) {
+            }
 
             @Override
             public void afterTextChanged(Editable s) {
@@ -129,9 +125,11 @@ public class EmailFourDigitCode extends AppCompatActivity {
 
         if (enteredCode.equals(originalCode)) {
             Toast.makeText(this, "Code verified successfully", Toast.LENGTH_SHORT).show();
-            Intent intent = new Intent(EmailFourDigitCode.this, ResetPassword.class);
+
+            // Redirect to ProfileSetupActivity
+            Intent intent = new Intent(EmailFourDigitCode.this, ProfileSetupActivity.class);
             intent.putExtra("email", email);
-            intent.putExtra("code", originalCode);
+            intent.putExtra("uid", mAuth.getCurrentUser().getUid());
             startActivity(intent);
             finish();
         } else {
@@ -140,9 +138,7 @@ public class EmailFourDigitCode extends AppCompatActivity {
     }
 
     private void resendVerificationCode() {
-
         originalCode = String.valueOf(1000 + new java.util.Random().nextInt(9000));
-
 
         db.collection("verificationCodes").document(email)
                 .update("code", originalCode)
@@ -185,7 +181,7 @@ public class EmailFourDigitCode extends AppCompatActivity {
         message.setRecipients(Message.RecipientType.TO, InternetAddress.parse(email));
         message.setSubject("Your Verification Code");
         message.setText("Your new verification code is: " + code +
-                "\n\nPlease use this code to reset your password.");
+                "\n\nPlease use this code to verify your email.");
         Transport.send(message);
     }
 }
