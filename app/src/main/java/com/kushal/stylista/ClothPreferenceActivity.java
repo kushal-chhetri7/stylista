@@ -145,7 +145,7 @@ public class ClothPreferenceActivity extends AppCompatActivity {
     }
 
     private void navigateToMainActivity() {
-        startActivity(new Intent(this, MainActivity.class));
+        startActivity(new Intent(this, MainActivity.class).putExtra("uid", uid));
         finish();
     }
 }

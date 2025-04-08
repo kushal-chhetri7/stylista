@@ -3,6 +3,7 @@
     xmlns:tools="http://schemas.android.com/tools">
 
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
 
     <application
         android:allowBackup="true"
@@ -86,6 +87,24 @@
             android:exported="false" />
         <activity
             android:name=".FavoriteListActivity"
+            android:exported="false" />
+        <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".YourProfileActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PersonalDetailsActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PasswordManagerActivity"
+            android:exported="false" />
+        <activity
+            android:name=".PrivacyActivity"
+            android:exported="false" />
+        <activity
+            android:name=".HelpActivity"
             android:exported="false" />
     </application>
 
