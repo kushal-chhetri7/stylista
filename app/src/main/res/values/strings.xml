@@ -6,6 +6,8 @@
     <string name="hintEmail">example@gmail.com</string>
     <string name="password">Password</string>
     <string name="new_password">New password</string>
+    <string name="current_password">Current password</string>
+    <string name="current_password_hint">Enter your current password</string>
     <string name="confirm_new_password">Confirm new password</string>
     <string name="confirm_new_password_hint">repeat password</string>
     <string name="hintPassword">must be 8 characters</string>
@@ -26,9 +28,11 @@
     <string name="forgot_password">Forgot password?</string>
     <string name="forgot_password_subtitle">Don’t worry! It happens. Please enter the email associated with your account.</string>
     <string name="enter_your_email_address">Enter your email address</string>
-    <string name="send_code">Send code</string>
+    <string name="send_verification_link">Send verification link</string>
     <string name="verify">Verify</string>
     <string name="reset_password">Reset password</string>
+    <string name="change_password">Change password</string>
+
     <string name="remember_password">Remember password? Log in</string>
     <string name="check_mail">Please check your\nemail</string>
     <string name="check_mail_subtitle">We’ve sent a code to your email</string>
@@ -49,10 +53,19 @@
     <string name="date_of_birth">DOB</string>
     <string name="gender">Gender</string>
     <string name="next">Next</string>
+    <string name="update">Update</string>
     <string name="preferences">Your preference</string>
     <string name="five_options">Choose up to 5</string>
     <string name="skip">Skip</string>
     <string name="start">Start</string>
+    <string name="dummy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+
+    <array name="delete_reasons">
+        <item>I have a different account</item>
+        <item>I no longer need this service</item>
+        <item>Privacy concerns</item>
+        <item>Other</item>
+    </array>
 
 
     <string name="cloth_description">Product and Quality

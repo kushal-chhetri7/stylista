@@ -50,6 +50,8 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
     private List<String> favorites = new ArrayList<>();
     private ClothModel currentCloth;
 
+    private String uid;
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -67,7 +69,10 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
 //        findViewById(R.id.image).setOnClickListener(v -> showDetailActivity());
 
-        findViewById(R.id.btnSetting).setOnClickListener(v -> showFavoriteList());
+        findViewById(R.id.btnSetting).setOnClickListener(v -> showSettings());
+
+        uid = getIntent().getStringExtra("uid");
+
 
         btnUndo = findViewById(R.id.btnUndo);
         btnReject = findViewById(R.id.btnReject);
@@ -149,6 +154,11 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
     private void showFavoriteList() {
         Intent intent = new Intent(this, FavoriteListActivity.class);
+        startActivity(intent);
+    }
+
+    private void showSettings() {
+        Intent intent = (new Intent(this, SettingsActivity.class).putExtra("uid", uid));
         startActivity(intent);
     }
 
