@@ -19,6 +19,7 @@ import androidx.appcompat.widget.AppCompatImageButton;
 import com.kushal.stylista.adapter.SwipeCardStackAdapter;
 import com.kushal.stylista.model.ClothModel;
 import com.kushal.stylista.services.ApiListResponseCallback;
+import com.kushal.stylista.services.CartRepository;
 import com.kushal.stylista.services.ClothRepository;
 import com.kushal.stylista.utils.SnackbarHelper;
 import com.kushal.stylista.utils.SnackbarType;
@@ -37,12 +38,13 @@ import java.util.List;
 
 public class MainActivity extends AppCompatActivity implements CardStackListener {
     public static final String TAG = MainActivity.class.getSimpleName();
+    private final ClothRepository repository = new ClothRepository();
+    private final CartRepository cartRepository = new CartRepository();
     List<ClothModel> clothModelList = new ArrayList<>();
-    ClothRepository repository = new ClothRepository();
     private CardStackView cardStackView;
     private SwipeCardStackAdapter swipeCardStackAdapter;
     private CardStackLayoutManager cardStackLayoutManager;
-    private AppCompatImageButton btnUndo, btnReject, btnInfo, btnFavorite, btnAddToCart;
+    private AppCompatImageButton btnUndo, btnReject, btnInfo, btnFavorite, btnAddToCart, btnCart;
     private TextView categoryTextView, titleTextView, priceTextView;
     private ProgressBar progressBar;
     private List<String> favorites = new ArrayList<>();
@@ -77,6 +79,7 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         btnInfo = findViewById(R.id.btnInfo);
         btnFavorite = findViewById(R.id.btnFavorite);
         btnAddToCart = findViewById(R.id.btnAddToCart);
+        btnCart = findViewById(R.id.btnCart);
 
         progressBar = findViewById(R.id.progressBar);
 
@@ -85,6 +88,8 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         btnFavorite.setOnClickListener(v -> onFavoriteClicked());
         btnInfo.setOnClickListener(v -> showDetailActivity());
         btnAddToCart.setOnClickListener(v -> onAddToCartClicked());
+        btnCart.setOnClickListener(v -> showCartList());
+
         progressBar.setVisibility(VISIBLE);
         fetchFavoriteList();
         fetchData();
@@ -157,6 +162,11 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         startActivity(intent);
     }
 
+    private void showCartList() {
+        Intent intent = new Intent(this, CartListActivity.class);
+        startActivity(intent);
+    }
+
     private void onUndoClicked() {
         cardStackView.rewind();
     }
@@ -190,7 +200,7 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
         titleTextView.setText(currentCloth.getName());
         priceTextView.setText(getString(R.string.price, currentCloth.getPrice()));
 
-        btnFavorite.setImageResource(favorites.contains(currentCloth.getId()) ?  R.drawable.ic_favorite:R.drawable.ic_favorite_outline);
+        btnFavorite.setImageResource(favorites.contains(currentCloth.getId()) ? R.drawable.ic_favorite : R.drawable.ic_favorite_outline);
     }
 
     @Override
@@ -201,6 +211,9 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
     @Override
     public void onCardSwiped(@Nullable Direction direction) {
         Log.e(TAG, "onCardSwiped: " + direction);
+        if (direction == Direction.Right) {
+            addToCart();
+        }
     }
 
     @Override
@@ -238,6 +251,29 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
                     onUndoClicked();
                 }
             });
+        }
+    }
+
+    private void addToCart() {
+        if (currentCloth != null) {
+            cartRepository.addToCart(
+                    currentCloth,
+                    1,
+                    currentCloth.getColors().get(0).getName(),
+                    currentCloth.getColors().get(0).getSizes().get(0).getSize(),
+                    new ApiSaveResponseCallback() {
+                        @Override
+                        public void onSuccess() {
+                            SnackbarHelper.showSnackbar(findViewById(android.R.id.content), "Added to cart successfully", SnackbarType.SUCCESS);
+                        }
+
+                        @Override
+                        public void onFailure(Exception exception) {
+                            exception.printStackTrace();
+                            cardStackView.rewind();
+                            SnackbarHelper.showSnackbar(findViewById(android.R.id.content), exception.getMessage(), SnackbarType.ERROR);
+                        }
+                    });
         }
     }
 

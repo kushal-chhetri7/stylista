@@ -6,6 +6,7 @@ import com.google.android.gms.tasks.Task;
 import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -24,9 +25,11 @@ import java.util.Map;
 public class ClothRepository {
 
     private FirebaseFirestore db;
+    private CollectionReference clothRef;
 
     public ClothRepository() {
         db = FirebaseFirestore.getInstance();
+        clothRef = db.collection(FirebaseConstants.COLLECTION_CLOTHES);
     }
 
     public void getClothes(ApiListResponseCallback<ClothModel> callback) {
@@ -101,34 +104,14 @@ public class ClothRepository {
             return;
         }
         DocumentReference favoriteRef = db.collection(FirebaseConstants.COLLECTION_FAVORITES).document(user.getUid());
-        favoriteRef.get().continueWithTask(task -> {
-            if (!task.isSuccessful() || !task.getResult().exists()) {
-                return Tasks.forResult(new ArrayList<DocumentSnapshot>()); // Return empty list if no favorites
+
+        favoriteRef.get().addOnSuccessListener(documentSnapshot -> {
+            if (documentSnapshot.exists()) {
+                List<String> favoriteIds = (List<String>) documentSnapshot.get(FirebaseConstants.FIELD_FAVORITE);
+                fetchClothesByIds(favoriteIds, callback);
+            } else {
+                callback.onSuccess(new ArrayList<>());
             }
-            List<String> favoriteIds = (List<String>) task.getResult().get(FirebaseConstants.FIELD_FAVORITE);
-
-
-            // Fetch clothes from the main "clothes" collection using IDs
-            List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
-            for (String clothId : favoriteIds) {
-                tasks.add(db.collection(FirebaseConstants.COLLECTION_CLOTHES).document(clothId).get());
-            }
-
-            return Tasks.whenAllSuccess(tasks); // Return a single task for all fetches
-
-
-        }).addOnSuccessListener(results -> {
-            List<ClothModel> favoriteClothes = new ArrayList<>();
-            for (Object result : results) {
-                if (result instanceof DocumentSnapshot) {
-                    ClothModel cloth = ((DocumentSnapshot) result).toObject(ClothModel.class);
-                    if (cloth != null) {
-                        cloth.setId(((DocumentSnapshot) result).getId());
-                        favoriteClothes.add(cloth);
-                    }
-                }
-            }
-            callback.onSuccess(favoriteClothes);
         });
     }
 
@@ -142,6 +125,39 @@ public class ClothRepository {
                 .document(user.getUid());
         favoriteRef.update(FirebaseConstants.FIELD_FAVORITE, FieldValue.arrayRemove(clothId))
                 .addOnSuccessListener(aVoid -> callback.onSuccess())
+                .addOnFailureListener(callback::onFailure);
+    }
+
+    public void fetchClothesByIds(List<String> clothIds, ApiListResponseCallback<ClothModel> callback) {
+        if (clothIds == null || clothIds.isEmpty()) {
+            callback.onFailure(new IllegalArgumentException("Cloth ID list is empty"));
+            return;
+        }
+
+        List<ClothModel> clothesList = new ArrayList<>();
+        List<Task<DocumentSnapshot>> tasks = new ArrayList<>();
+
+        for (String clothId : clothIds) {
+            Task<DocumentSnapshot> task = clothRef.document(clothId).get();
+            tasks.add(task);
+        }
+
+        Tasks.whenAllSuccess(tasks)
+                .addOnSuccessListener(resultList -> {
+                    for (Object obj : resultList) {
+                        if (obj instanceof DocumentSnapshot) {
+                            DocumentSnapshot document = (DocumentSnapshot) obj;
+                            if (document.exists()) {
+                                ClothModel cloth = document.toObject(ClothModel.class);
+                                if (cloth != null) {
+                                    cloth.setId(document.getId());
+                                    clothesList.add(cloth);
+                                }
+                            }
+                        }
+                    }
+                    callback.onSuccess(clothesList);
+                })
                 .addOnFailureListener(callback::onFailure);
     }
 
