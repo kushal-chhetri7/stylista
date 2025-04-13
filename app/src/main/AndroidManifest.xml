@@ -14,7 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Stylista"
         tools:targetApi="31">
-
+        <activity
+            android:name=".CartListActivity"
+            android:exported="false" />
         <activity
             android:name=".SplashActivity"
             android:exported="true">
@@ -67,13 +69,10 @@
             android:exported="true" />
         <activity
             android:name=".ProfileSetupActivity"
-            android:exported="true">
-        </activity>
+            android:exported="true"></activity>
         <activity
             android:name=".ClothPreferenceActivity"
-            android:exported="true">
-        </activity>
-
+            android:exported="true"></activity>
         <activity
             android:name=".MainActivity"
             android:exported="true" />

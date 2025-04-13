@@ -55,7 +55,6 @@
     <string name="start">Start</string>
 
 
-
     <string name="cloth_description">Product and Quality
 Printed men’s T-shirt.
 Strong, non-slip fabric (190g/m2).
@@ -81,8 +80,14 @@ The Öko-Tex 100 standard also guarantees protective measures to safeguard human
 
 </string>
     <string name="favorites">Favorites</string>
+    <string name="cart">Cart</string>
+
     <string name="add_to_cart">Add to cart</string>
     <string name="price">$%.2f</string>
+    <string name="quantity">Quantity: %d</string>
+    <string name="item_total_price">Item Total Price: $%.2f</string>
+    <string name="sub_total">Sub Total:</string>
+    <string name="order">Order</string>
 
 
 </resources>
