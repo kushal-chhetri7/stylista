@@ -118,8 +118,8 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
     private void fetchFavoriteList() {
         repository.getFavoriteClothesId(new ApiListResponseCallback<String>() {
             @Override
-            public void onSuccess(List<String> clothes) {
-                favorites = clothes;
+            public void onSuccess(List<String> dataList) {
+                favorites = dataList;
             }
 
             @Override
@@ -133,12 +133,12 @@ public class MainActivity extends AppCompatActivity implements CardStackListener
 
         repository.getClothes(new ApiListResponseCallback<ClothModel>() {
             @Override
-            public void onSuccess(List<ClothModel> clothes) {
-                for (ClothModel cloth : clothes) {
+            public void onSuccess(List<ClothModel> dataList) {
+                for (ClothModel cloth : dataList) {
                     cloth.setFavorite(favorites.contains(cloth.getId()));
                 }
                 progressBar.setVisibility(GONE);
-                swipeCardStackAdapter.setClothModelList(clothes);
+                swipeCardStackAdapter.setClothModelList(dataList);
             }
 
             @Override

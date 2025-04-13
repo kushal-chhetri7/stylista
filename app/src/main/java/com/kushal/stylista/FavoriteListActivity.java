@@ -72,9 +72,9 @@ public class FavoriteListActivity extends AppCompatActivity {
         progressBar.setVisibility(View.VISIBLE);
         repository.getFavoriteClothes(new ApiListResponseCallback<ClothModel>() {
             @Override
-            public void onSuccess(List<ClothModel> clothes) {
+            public void onSuccess(List<ClothModel> dataList) {
                 progressBar.setVisibility(View.GONE);
-                favoriteListAdapter.setFavoriteModelList(clothes);
+                favoriteListAdapter.setFavoriteModelList(dataList);
             }
 
             @Override

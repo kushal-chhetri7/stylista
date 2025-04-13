@@ -1,5 +1,7 @@
 package com.kushal.stylista.model;
 
+import com.google.firebase.firestore.DocumentSnapshot;
+
 public class CartModel {
 
     private String id;
@@ -83,5 +85,17 @@ public class CartModel {
     public double getSubtotal() {
         return clothModel.getPrice() * count;
     }
+
+    // Method to convert CartModel to OrderItem
+    public OrderModel.OrderItem toOrderItem() {
+        return new OrderModel.OrderItem(this.clothId, this.color, this.size, this.count, this.clothModel.getPrice());
+    }
+
+    public static CartModel fromDocumentSnapshot(DocumentSnapshot documentSnapshot) {
+        CartModel cartModel = documentSnapshot.toObject(CartModel.class);
+        cartModel.setId(documentSnapshot.getId());
+        return cartModel;
+    }
+
 
 }

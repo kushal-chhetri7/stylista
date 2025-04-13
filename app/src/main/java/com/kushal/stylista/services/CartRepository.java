@@ -1,5 +1,7 @@
 package com.kushal.stylista.services;
 
+import com.google.android.gms.tasks.Task;
+import com.google.android.gms.tasks.Tasks;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.firestore.CollectionReference;
@@ -9,6 +11,7 @@ import com.kushal.stylista.ApiSaveResponseCallback;
 import com.kushal.stylista.exceptions.UnAuthenticatedException;
 import com.kushal.stylista.model.CartModel;
 import com.kushal.stylista.model.ClothModel;
+import com.kushal.stylista.model.OrderModel;
 import com.kushal.stylista.utils.FirebaseConstants;
 
 import java.util.ArrayList;
@@ -37,24 +40,27 @@ public class CartRepository {
             return;
         }
 
-        db.collection(FirebaseConstants.COLLECTION_CARTS).
-                whereEqualTo(FirebaseConstants.FIELD_USER_ID, user.getUid())
+        db.collection(FirebaseConstants.COLLECTION_CARTS)
+                .whereEqualTo(FirebaseConstants.FIELD_USER_ID, user.getUid())
                 .get()
                 .addOnSuccessListener(queryDocumentSnapshots -> {
                     Set<String> clothes = new HashSet<>();
                     List<CartModel> cartModelList = new ArrayList<>();
+                    if(queryDocumentSnapshots.isEmpty()){
+                        callback.onSuccess(cartModelList);
+                        return;
+                    }
                     for (DocumentSnapshot document : queryDocumentSnapshots.getDocuments()) {
                         // Map the document to a ClothModel
-                        CartModel cartModel = document.toObject(CartModel.class);
-                        cartModel.setId(document.getId());
+                        CartModel cartModel = CartModel.fromDocumentSnapshot(document);
                         clothes.add(cartModel.getClothId());
                         cartModelList.add(cartModel);
                     }
                     clothRepository.fetchClothesByIds(new ArrayList<>(clothes), new ApiListResponseCallback<ClothModel>() {
                         @Override
-                        public void onSuccess(List<ClothModel> clothes) {
+                        public void onSuccess(List<ClothModel> dataList) {
                             Map<String, ClothModel> clothesMap = new HashMap<>();
-                            for (ClothModel clothe : clothes) {
+                            for (ClothModel clothe : dataList) {
                                 clothesMap.put(clothe.getId(), clothe);
                             }
                             for (CartModel cartModel : cartModelList) {
@@ -82,13 +88,11 @@ public class CartRepository {
                     CartModel cartModel = null;
                     if (!queryDocumentSnapshots.isEmpty()) {
                         DocumentSnapshot document = queryDocumentSnapshots.getDocuments().get(0);
-                        cartModel = document.toObject(CartModel.class);
-                        cartModel.setId(document.getId());
+                        cartModel = CartModel.fromDocumentSnapshot(document);
                     }
                     callback.onSuccess(cartModel);
 
-                })
-                .addOnFailureListener(callback::onFailure);
+                }).addOnFailureListener(callback::onFailure);
     }
 
     public void addToCart(ClothModel clothModel, int count, String size, String color, ApiSaveResponseCallback callback) {
@@ -109,9 +113,7 @@ public class CartRepository {
                     cartItem.put("color", color);
                     cartItem.put("size", size);
                     cartItem.put("count", count);
-                    cartRef.add(cartItem)
-                            .addOnSuccessListener(doc -> callback.onSuccess())
-                            .addOnFailureListener(callback::onFailure);
+                    cartRef.add(cartItem).addOnSuccessListener(doc -> callback.onSuccess()).addOnFailureListener(callback::onFailure);
                 } else {
                     updateCartItem(item.getId(), item.getCount() + count, callback);
                 }
@@ -128,14 +130,54 @@ public class CartRepository {
     // Update existing cart item count
     public void updateCartItem(String docId, int newCount, ApiSaveResponseCallback callback) {
         cartRef.document(docId).update("count", newCount)
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
-                .addOnFailureListener(callback::onFailure);
+                .addOnSuccessListener(aVoid -> callback.onSuccess()).addOnFailureListener(callback::onFailure);
     }
 
     public void deleteCartItem(String docId, ApiSaveResponseCallback callback) {
-        cartRef.document(docId).delete()
-                .addOnSuccessListener(aVoid -> callback.onSuccess())
+        cartRef.document(docId).delete().addOnSuccessListener(aVoid -> callback.onSuccess()).addOnFailureListener(callback::onFailure);
+    }
+
+    public void confirmOrder(List<CartModel> cartModelList, double totalAmount, String paymentId, ApiSaveResponseCallback callback) {
+        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
+        if (user == null) {
+            callback.onFailure(new UnAuthenticatedException());
+            return;
+        }
+
+        List<OrderModel.OrderItem> orderItems = new ArrayList<>();
+        for (CartModel cartModel : cartModelList) {
+            OrderModel.OrderItem orderItem = cartModel.toOrderItem();
+            orderItems.add(orderItem);
+        }
+
+        OrderModel order = new OrderModel(user.getUid(), orderItems, totalAmount, "pending", "confirmed", paymentId);
+
+        // Create an entry for the order in Firestore
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+        CollectionReference ordersRef = db.collection("orders");
+
+        ordersRef.add(order).addOnSuccessListener(orderDocRef -> {
+            // After order is created, delete the cart items
+            deleteCartItems(cartModelList, callback);
+        }).addOnFailureListener(callback::onFailure);
+    }
+
+    // Method to delete cart items and move them to the order
+    private void deleteCartItems(List<CartModel> cartModelList, ApiSaveResponseCallback callback) {
+        FirebaseFirestore db = FirebaseFirestore.getInstance();
+
+        List<Task<Void>> tasks = new ArrayList<>();
+        for (CartModel cart : cartModelList) {
+            Task<Void> task = cartRef.document(cart.getId()).delete();
+            tasks.add(task);
+        }
+        // Delete each item from the cart
+        Tasks.whenAllSuccess(tasks)
+                .addOnSuccessListener(resultList -> {
+                    callback.onSuccess();
+                })
                 .addOnFailureListener(callback::onFailure);
     }
+
 
 }
