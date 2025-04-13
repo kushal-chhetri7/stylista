@@ -34,6 +34,7 @@ import com.google.firebase.firestore.FirebaseFirestore;
 
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
+import java.util.Set;
 
 public class SettingsActivity extends AppCompatActivity {
 
@@ -107,6 +108,10 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.logoutMenuItem).setOnClickListener(v -> showLogoutConfirmationDialog());
 
         findViewById(R.id.backButton).setOnClickListener(v -> showMain());
+
+        findViewById(R.id.ordersMenuItem).setOnClickListener(v -> {
+            startActivity(new Intent(SettingsActivity.this, OrderListActivity.class));
+        });
     }
 
     private void loadFullName() {

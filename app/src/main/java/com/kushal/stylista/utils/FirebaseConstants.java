@@ -10,5 +10,6 @@ public class FirebaseConstants {
 
     public static final String FIELD_FAVORITE = "favorites";
     public static final String FIELD_USER_ID = "userId";
+    public static final String FIELD_IS_ORDERED = "isOrdered";
 
 }
