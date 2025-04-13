@@ -1,34 +1,29 @@
+
+
 package com.kushal.stylista;
 
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
-import android.view.View;
+
 import android.widget.ArrayAdapter;
-import android.widget.DatePicker;
 import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.Spinner;
-import android.widget.Toast;
+
 
 import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 
-import com.google.firebase.firestore.FirebaseFirestore;
-
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
-import java.util.Map;
 
 public class ProfileSetupActivity extends AppCompatActivity {
 
     private EditText dobEditText, firstNameEditText, lastNameEditText;
     private Spinner genderSpinner;
     private Calendar calendar;
-    private FirebaseFirestore db;
     private String email, uid;
 
     @Override
@@ -37,10 +32,6 @@ public class ProfileSetupActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_profile_setup);
 
-        // Initialize Firestore
-        db = FirebaseFirestore.getInstance();
-
-        // Get email and UID from intent
         email = getIntent().getStringExtra("email");
         uid = getIntent().getStringExtra("uid");
 
@@ -51,12 +42,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
         calendar = Calendar.getInstance();
 
         String[] genderOptions = {"Male", "Female"};
-        ArrayAdapter<String> adapter = new ArrayAdapter<>(
-                this,
-                android.R.layout.simple_spinner_dropdown_item,
-                genderOptions
-        );
-        adapter.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        ArrayAdapter<String> adapter = new ArrayAdapter<>(this, android.R.layout.simple_spinner_dropdown_item, genderOptions);
         genderSpinner.setAdapter(adapter);
 
         ImageView spinnerIcon = findViewById(R.id.spinnerIcon);
@@ -64,9 +50,7 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         dobEditText.setOnClickListener(v -> showDatePickerDialog());
         dobEditText.setOnFocusChangeListener((v, hasFocus) -> {
-            if (hasFocus) {
-                showDatePickerDialog();
-            }
+            if (hasFocus) showDatePickerDialog();
         });
 
         findViewById(R.id.nextButton).setOnClickListener(v -> validateFields());
@@ -81,15 +65,18 @@ public class ProfileSetupActivity extends AppCompatActivity {
         };
 
         DatePickerDialog datePickerDialog = new DatePickerDialog(
-                ProfileSetupActivity.this,
+                this,
                 dateSetListener,
                 calendar.get(Calendar.YEAR),
                 calendar.get(Calendar.MONTH),
                 calendar.get(Calendar.DAY_OF_MONTH)
         );
+
         datePickerDialog.getDatePicker().setMaxDate(System.currentTimeMillis());
+
         datePickerDialog.show();
     }
+
 
     private void updateDateInView() {
         String dateFormat = "yyyy-MM-dd";
@@ -105,49 +92,29 @@ public class ProfileSetupActivity extends AppCompatActivity {
 
         if (firstName.isEmpty()) {
             firstNameEditText.setError("First name is required");
-            firstNameEditText.requestFocus();
             return;
         }
         if (lastName.isEmpty()) {
             lastNameEditText.setError("Last name is required");
-            lastNameEditText.requestFocus();
             return;
         }
         if (dob.isEmpty()) {
             dobEditText.setError("Date of birth is required");
-            dobEditText.requestFocus();
-            return;
-        }
-        if (gender.isEmpty()) {
-            Toast.makeText(this, "Please select a gender", Toast.LENGTH_SHORT).show();
-            genderSpinner.requestFocus();
             return;
         }
 
-        saveProfileToFirestore(firstName, lastName, dob, gender);
+        Intent intent = new Intent(ProfileSetupActivity.this, ClothPreferenceActivity.class);
+        intent.putExtra("email", email);
+        intent.putExtra("password", getIntent().getStringExtra("password"));
+        intent.putExtra("provider", getIntent().getStringExtra("provider"));
+        intent.putExtra("idToken", getIntent().getStringExtra("idToken"));
+        intent.putExtra("accessToken", getIntent().getStringExtra("accessToken"));
+        intent.putExtra("firstName", firstName);
+        intent.putExtra("lastName", lastName);
+        intent.putExtra("dob", dob);
+        intent.putExtra("gender", gender);
+        startActivity(intent);
+
+        finish();
     }
-
-    private void saveProfileToFirestore(String firstName, String lastName, String dob, String gender) {
-        Map<String, Object> userProfile = new HashMap<>();
-        userProfile.put("email", email);
-        userProfile.put("firstName", firstName);
-        userProfile.put("lastName", lastName);
-        userProfile.put("dob", dob);
-        userProfile.put("gender", gender);
-        userProfile.put("profileCompleted", true);
-
-        db.collection("users").document(uid)
-                .set(userProfile)
-                .addOnSuccessListener(aVoid -> {
-                    Toast.makeText(this, "Profile saved successfully!", Toast.LENGTH_SHORT).show();
-                    startActivity(new Intent(ProfileSetupActivity.this, ClothPreferenceActivity.class).putExtra("uid", uid));
-                    finish();
-
-                })
-                .addOnFailureListener(e -> {
-                    Log.e("FirestoreError", "Failed to save profile: " + e.getMessage(), e); // Log error message
-                    Toast.makeText(this, "Failed to save profile: " + e.getMessage(), Toast.LENGTH_SHORT).show();
-                });
-    }
-
 }
