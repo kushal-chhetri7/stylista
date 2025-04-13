@@ -3,7 +3,6 @@ package com.kushal.stylista;
 import android.content.Intent;
 import android.os.Bundle;
 import android.util.Log;
-import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.Toast;
@@ -12,25 +11,24 @@ import androidx.activity.EdgeToEdge;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.google.firebase.auth.*;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ClothPreferenceActivity extends AppCompatActivity {
 
-    private int selectedCount = 0;
-    private final int MAX_SELECTIONS = 5;
-    private FirebaseFirestore db;
-    private FirebaseAuth auth;
-    private String uid;
+    private static final int MAX_SELECTIONS = 5;
+
     private List<String> selectedPreferences = new ArrayList<>();
+    private int selectedCount = 0;
+
+    private FirebaseAuth auth;
+    private FirebaseFirestore db;
+
+    private String email, password, provider, idToken, accessToken;
+    private String firstName, lastName, dob, gender;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,25 +36,20 @@ public class ClothPreferenceActivity extends AppCompatActivity {
         EdgeToEdge.enable(this);
         setContentView(R.layout.activity_cloth_preference);
 
-        db = FirebaseFirestore.getInstance();
         auth = FirebaseAuth.getInstance();
-        uid = getIntent().getStringExtra("uid");
+        db = FirebaseFirestore.getInstance();
 
-        FirebaseUser currentUser = auth.getCurrentUser();
-        if (currentUser == null) {
-            Log.e("AuthError", "No authenticated user found");
-            Toast.makeText(this, "User not authenticated", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
-        if (uid == null || !uid.equals(currentUser.getUid())) {
-            Log.e("AuthError", "UID mismatch: passed=" + uid + ", auth=" + currentUser.getUid());
-            Toast.makeText(this, "Invalid user ID", Toast.LENGTH_SHORT).show();
-            finish();
-            return;
-        }
+        // Get values from Intent
+        email = getIntent().getStringExtra("email");
+        password = getIntent().getStringExtra("password"); // might be null
+        provider = getIntent().getStringExtra("provider"); // email, google, facebook
+        idToken = getIntent().getStringExtra("idToken");
+        accessToken = getIntent().getStringExtra("accessToken");
 
-        Log.d("Firestore", "Starting ClothPreferenceActivity for UID: " + uid);
+        firstName = getIntent().getStringExtra("firstName");
+        lastName = getIntent().getStringExtra("lastName");
+        dob = getIntent().getStringExtra("dob");
+        gender = getIntent().getStringExtra("gender");
 
         Map<Integer, String> preferenceMap = new HashMap<>();
         preferenceMap.put(R.id.boxTShirt, "T-Shirt");
@@ -73,79 +66,92 @@ public class ClothPreferenceActivity extends AppCompatActivity {
         preferenceMap.put(R.id.scarf, "Scarf");
 
         List<LinearLayout> selectableBoxes = Arrays.asList(
-                findViewById(R.id.boxTShirt),
-                findViewById(R.id.shirt),
-                findViewById(R.id.hoodie),
-                findViewById(R.id.pants),
-                findViewById(R.id.suit),
-                findViewById(R.id.jacket),
-                findViewById(R.id.skirt),
-                findViewById(R.id.dress),
-                findViewById(R.id.undergarments),
-                findViewById(R.id.shorts),
-                findViewById(R.id.joggers),
-                findViewById(R.id.scarf)
+                findViewById(R.id.boxTShirt), findViewById(R.id.shirt), findViewById(R.id.hoodie),
+                findViewById(R.id.pants), findViewById(R.id.suit), findViewById(R.id.jacket),
+                findViewById(R.id.skirt), findViewById(R.id.dress), findViewById(R.id.undergarments),
+                findViewById(R.id.shorts), findViewById(R.id.joggers), findViewById(R.id.scarf)
         );
 
         for (LinearLayout box : selectableBoxes) {
             box.setOnClickListener(v -> {
-                boolean isSelected = box.getTag() != null && box.getTag().equals("selected");
                 String preference = preferenceMap.get(box.getId());
+                boolean isSelected = "selected".equals(box.getTag());
 
                 if (isSelected) {
                     box.setBackground(ContextCompat.getDrawable(this, R.drawable.box_background));
                     box.setTag(null);
                     selectedCount--;
                     selectedPreferences.remove(preference);
+                } else if (selectedCount < MAX_SELECTIONS) {
+                    box.setBackground(ContextCompat.getDrawable(this, R.drawable.selected_box_background));
+                    box.setTag("selected");
+                    selectedCount++;
+                    selectedPreferences.add(preference);
                 } else {
-                    if (selectedCount < MAX_SELECTIONS) {
-                        box.setBackground(ContextCompat.getDrawable(this, R.drawable.selected_box_background));
-                        box.setTag("selected");
-                        selectedCount++;
-                        selectedPreferences.add(preference);
-                    } else {
-                        Toast.makeText(this, "You can select up to " + MAX_SELECTIONS + " preferences", Toast.LENGTH_SHORT).show();
-                    }
+                    Toast.makeText(this, "Max 5 preferences allowed", Toast.LENGTH_SHORT).show();
                 }
             });
         }
 
         Button startButton = findViewById(R.id.startButton);
+        Button skipButton = findViewById(R.id.skipButton);
+
         startButton.setOnClickListener(v -> {
             if (selectedCount > 0) {
-                savePreferencesToFirestore();
+                registerFirebaseUser();
             } else {
-                Toast.makeText(this, "Please select at least one preference or click Skip", Toast.LENGTH_SHORT).show();
+                Toast.makeText(this, "Please select at least one preference", Toast.LENGTH_SHORT).show();
             }
         });
 
-        Button skipButton = findViewById(R.id.skipButton);
-        skipButton.setOnClickListener(v -> navigateToMainActivity());
+        skipButton.setOnClickListener(v -> {
+            selectedPreferences.clear();
+            registerFirebaseUser();
+        });
     }
 
-    private void savePreferencesToFirestore() {
-        String preferencesString = String.join(",", selectedPreferences);
+    private void registerFirebaseUser() {
+        if ("google".equals(provider)) {
+            AuthCredential credential = GoogleAuthProvider.getCredential(idToken, null);
+            signInWithCredential(credential);
+        } else if ("facebook".equals(provider)) {
+            AuthCredential credential = FacebookAuthProvider.getCredential(accessToken);
+            signInWithCredential(credential);
+        } else { // Email & Password
+            auth.createUserWithEmailAndPassword(email, password)
+                    .addOnSuccessListener(result -> saveUserProfile(auth.getCurrentUser().getUid()))
+                    .addOnFailureListener(e -> Toast.makeText(this, "Email signup failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+        }
+    }
 
-        Map<String, Object> updates = new HashMap<>();
-        updates.put("preferences", preferencesString);
-        updates.put("updatedAt", FieldValue.serverTimestamp());
+    private void signInWithCredential(AuthCredential credential) {
+        auth.signInWithCredential(credential)
+                .addOnSuccessListener(result -> saveUserProfile(auth.getCurrentUser().getUid()))
+                .addOnFailureListener(e -> Toast.makeText(this, "Auth failed: " + e.getMessage(), Toast.LENGTH_SHORT).show());
+    }
 
-        Log.d("Firestore", "Attempting to update preferences for UID: " + uid + " with: " + preferencesString);
+    private void saveUserProfile(String uid) {
+        String preferences = String.join(",", selectedPreferences);
+
+        Map<String, Object> userProfile = new HashMap<>();
+        userProfile.put("email", email);
+        userProfile.put("firstName", firstName);
+        userProfile.put("lastName", lastName);
+        userProfile.put("dob", dob);
+        userProfile.put("gender", gender);
+        userProfile.put("preferences", preferences);
+        userProfile.put("profileCompleted", true);
+        userProfile.put("createdAt", FieldValue.serverTimestamp());
+
         db.collection("users").document(uid)
-                .update(updates)
+                .set(userProfile)
                 .addOnSuccessListener(aVoid -> {
-                    Log.d("Firestore", "Preferences updated successfully for UID: " + uid);
-                    Toast.makeText(this, "Preferences saved successfully!", Toast.LENGTH_SHORT).show();
-                    navigateToMainActivity();
+                    Toast.makeText(this, "Welcome to Stylista!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(this, MainActivity.class));
+                    finish();
                 })
                 .addOnFailureListener(e -> {
-                    Log.e("FirestoreError", "Failed to save preferences: " + e.getMessage(), e);
-                    Toast.makeText(this, "Failed to save preferences: " + e.getMessage(), Toast.LENGTH_LONG).show();
+                    Toast.makeText(this, "Failed to save profile", Toast.LENGTH_SHORT).show();
                 });
-    }
-
-    private void navigateToMainActivity() {
-        startActivity(new Intent(this, MainActivity.class).putExtra("uid", uid));
-        finish();
     }
 }
