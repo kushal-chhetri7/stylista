@@ -18,6 +18,9 @@
         android:usesCleartextTraffic="true"
         tools:targetApi="31">
         <activity
+            android:name=".admin.AdminMainActivity"
+            android:exported="false" />
+        <activity
             android:name=".OrderListActivity"
             android:exported="false" />
         <activity

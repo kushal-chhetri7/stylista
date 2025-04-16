@@ -34,26 +34,29 @@ import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.tasks.Task;
 import com.google.android.material.textfield.TextInputEditText;
 import com.google.android.material.textfield.TextInputLayout;
-import com.google.firebase.Firebase;
 import com.google.firebase.auth.AuthCredential;
 import com.google.firebase.auth.FacebookAuthProvider;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.GoogleAuthProvider;
+import com.kushal.stylista.admin.AdminMainActivity;
+import com.kushal.stylista.model.UserModel;
+import com.kushal.stylista.services.ApiDataResponseCallback;
+import com.kushal.stylista.services.UserRepository;
 
 import java.util.Arrays;
 
 public class LoginActivity extends AppCompatActivity {
 
+    private static final int RC_SIGN_IN = 9001;
+    UserRepository userRepository = new UserRepository();
     private EditText email;
     private TextInputEditText passwordEditText;
     private TextInputLayout passwordLayout;
     private Button facebookButton, login;
     private TextView tvSignUp, forgotPassword;
     private FrameLayout googleButton;
-
     private GoogleSignInClient googleSignInClient;
     private CallbackManager callbackManager;
-    private static final int RC_SIGN_IN = 9001;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -101,15 +104,21 @@ public class LoginActivity extends AppCompatActivity {
                 return;
             }
 
-            FirebaseAuth.getInstance().signInWithEmailAndPassword(emailText, passwordText)
-                    .addOnCompleteListener(task -> {
-                        if (task.isSuccessful()) {
-                            Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
-                            startActivity(new Intent(LoginActivity.this, MainActivity.class));
-                        } else {
-                            Toast.makeText(LoginActivity.this, "Login failed: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();
-                        }
-                    });
+            userRepository.loginUserWithEmailAndPassword(emailText, passwordText, new ApiDataResponseCallback<UserModel>() {
+                @Override
+                public void onSuccess(UserModel item) {
+                    Toast.makeText(LoginActivity.this, "Login successful!", Toast.LENGTH_SHORT).show();
+                    startActivity(new Intent(LoginActivity.this, item.isAdmin() ? AdminMainActivity.class : MainActivity.class));
+                }
+
+                @Override
+                public void onFailure(Exception exception) {
+                    exception.printStackTrace();
+                    Toast.makeText(LoginActivity.this, "Login failed: " + exception.getMessage(), Toast.LENGTH_SHORT).show();
+
+                }
+            });
+
         });
 
         // "Sign Up" Text Click Listener

@@ -9,8 +9,10 @@ import androidx.core.graphics.Insets;
 import androidx.core.view.ViewCompat;
 import androidx.core.view.WindowInsetsCompat;
 
-import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
+import com.kushal.stylista.admin.AdminMainActivity;
+import com.kushal.stylista.model.UserModel;
+import com.kushal.stylista.services.ApiDataResponseCallback;
+import com.kushal.stylista.services.UserRepository;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -25,11 +27,25 @@ public class SplashActivity extends AppCompatActivity {
             return insets;
         });
 
-        FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-        if(user == null){
-            startActivity(new Intent(this, LoginActivity.class));
-        } else {
-            startActivity(new Intent(this, MainActivity.class));
-        }
+        UserRepository userRepository = new UserRepository();
+
+        userRepository.getCurrentUser(new ApiDataResponseCallback<UserModel>() {
+            @Override
+            public void onSuccess(UserModel item) {
+                finish();
+                if (item == null) {
+                    startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+                    return;
+                }
+                startActivity(new Intent(SplashActivity.this, item.isAdmin() ? AdminMainActivity.class : MainActivity.class));
+
+            }
+
+            @Override
+            public void onFailure(Exception exception) {
+                startActivity(new Intent(SplashActivity.this, LoginActivity.class));
+            }
+        });
+
     }
 }
