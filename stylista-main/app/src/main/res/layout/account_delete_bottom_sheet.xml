@@ -1,0 +1,107 @@
+<?xml version="1.0" encoding="utf-8"?>
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="wrap_content"
+    android:background="@android:color/white"
+    android:padding="16dp">
+
+    <TextView
+        android:id="@+id/titleTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Account closure is a permanent action."
+        android:textSize="18sp"
+        android:textColor="@android:color/black"
+        android:textStyle="bold"
+        android:gravity="center_horizontal"
+        app:layout_constraintTop_toTopOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/reasonTextView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Why are you deleting the account?"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/titleTextView"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <FrameLayout
+        android:id="@+id/dropdown_deletion"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginBottom="24dp"
+        android:background="@drawable/edit_text_background"
+        android:paddingStart="16dp"
+        android:paddingTop="5dp"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/reasonTextView"
+        android:paddingEnd="16dp">
+
+        <Spinner
+            android:id="@+id/reasonSpinner"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@android:color/transparent"
+            android:paddingEnd="32dp"/>
+
+        <ImageView
+            android:id="@+id/spinnerIcon"
+            android:layout_width="24dp"
+            android:layout_height="24dp"
+            android:layout_gravity="end|center_vertical"
+            android:src="@drawable/ic_arrow_drop_down"/>
+    </FrameLayout>
+
+    <CheckBox
+        android:id="@+id/confirmationCheckBox"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/dropdown_deletion"
+        app:layout_constraintStart_toStartOf="parent" />
+
+    <TextView
+        android:id="@+id/confirmationTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Yes, I want to permanently close my account and delete my data"
+        android:textSize="16sp"
+        android:textColor="@android:color/black"
+        app:layout_constraintTop_toTopOf="@id/confirmationCheckBox"
+        app:layout_constraintBottom_toBottomOf="@id/confirmationCheckBox"
+        app:layout_constraintStart_toEndOf="@id/confirmationCheckBox"
+        android:layout_marginStart="8dp"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <Button
+        android:id="@+id/deleteAccountButton"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Delete account"
+        android:backgroundTint="@color/design_default_color_error"
+        android:textColor="@android:color/white"
+        android:layout_marginTop="24dp"
+        app:layout_constraintTop_toBottomOf="@id/confirmationCheckBox"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+    <TextView
+        android:id="@+id/legalDisclaimerTextView"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:text="Please be advised that we are legally required or entitled to retain some types of data, such as order history. We do this in line with applicable laws, including for tax and accounting, and for fraud prevention purposes."
+        android:textSize="12sp"
+        android:textColor="#777777"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="16dp"
+        app:layout_constraintTop_toBottomOf="@id/deleteAccountButton"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintEnd_toEndOf="parent" />
+
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,0 +1,149 @@
+<resources>
+    <string name="app_name">Stylista</string>
+    <string name="login">Log in</string>
+    <string name="signup">Sign up</string>
+    <string name="email">Email address</string>
+    <string name="hintEmail">example@gmail.com</string>
+    <string name="password">Password</string>
+    <string name="new_password">New password</string>
+    <string name="current_password">Current password</string>
+    <string name="current_password_hint">Enter your current password</string>
+    <string name="confirm_new_password">Confirm new password</string>
+    <string name="confirm_new_password_hint">repeat password</string>
+    <string name="hintPassword">must be 8 characters</string>
+    <string name="confirmPassword">Confirm Password</string>
+    <string name="hintConfirmPassword">repeat password</string>
+    <string name="forgotPassword">Forgot Password?</string>
+    <string name="orLoginWith">or Login with</string>
+    <string name="orRegisterWith">or Register with</string>
+    <string name="facebook">f</string>
+    <string name="google"> </string>
+    <string name="alternativeSignUp">Don\'t have an account? Sign up</string>
+    <string name="alternativeLogin">Already have an account? Log in</string>
+    <string name="facebook_app_id">633354209312421</string>
+    <string name="default_web_client_id">464014514904-h0asp21582a5fld1oe4qlokith9svgqo.apps.googleusercontent.com</string>
+    <string name="facebook_client_token">5acb7e7e4dacdbeac939f44544bbec33</string>
+    <string name="fb_login_protocol_scheme">fb1668977596911004</string>
+    <string name="back">Back</string>
+    <string name="forgot_password">Forgot password?</string>
+    <string name="forgot_password_subtitle">Don’t worry! It happens. Please enter the email associated with your account.</string>
+    <string name="enter_your_email_address">Enter your email address</string>
+    <string name="send_verification_link">Send verification link</string>
+    <string name="verify">Verify</string>
+    <string name="reset_password">Reset password</string>
+    <string name="change_password">Change password</string>
+
+    <string name="remember_password">Remember password? Log in</string>
+    <string name="check_mail">Please check your\nemail</string>
+    <string name="check_mail_subtitle">We’ve sent a code to your email</string>
+    <string name="send_code_again">Send code again </string>
+    <string name="resetTitle">Reset password</string>
+    <string name="resetSubtitle">Please type something that you\'ll remember</string>
+    <string name="password_changed">Password changed</string>
+    <string name="password_changed_subtitle">Your password has been changed\nsuccessfully</string>
+    <string name="back_to_login">Back to login</string>
+    <string-array name="gender_array">
+        <item></item>
+        <item>Male</item>
+        <item>Female</item>
+    </string-array>
+    <string name="profile_setup">Profile Setup</string>
+    <string name="first_name">First name</string>
+    <string name="last_name">Last name</string>
+    <string name="date_of_birth">DOB</string>
+    <string name="gender">Gender</string>
+    <string name="next">Next</string>
+    <string name="update">Update</string>
+    <string name="preferences">Your preference</string>
+    <string name="five_options">Choose up to 5</string>
+    <string name="skip">Skip</string>
+    <string name="start">Start</string>
+    <string name="dummy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
+
+    <array name="delete_reasons">
+        <item>I have a different account</item>
+        <item>I no longer need this service</item>
+        <item>Privacy concerns</item>
+        <item>Other</item>
+    </array>
+
+
+    <string name="cloth_description">Product and Quality
+Printed men’s T-shirt.
+Strong, non-slip fabric (190g/m2).
+The round neck is double-laid and slightly ribbed.
+The fabric is cotton.
+The T-shirt is new with tags.
+
+Size and Fit
+The T-shirt is available in sizes S-XXXXXL.
+Classic cut (not slim fit).
+You can find the exact sizes in centimetres in the third item picture.
+
+T-shirt prints
+The T-shirts are printed using high-quality screen-printing.
+Screen-printing is the best and highest quality textile printing method on the
+market and guarantees brilliant colours and durable prints.
+
+Environmental aspects
+The shirt meets the high demands of Öko-Tex 100 standard.
+Öko-Tex 100 standard is a certification system for raw textiles.
+The tests for harmful fabrics concern substances that are prohibited or regulated by law and chemicals that are acknowledged to be harmful to health.
+The Öko-Tex 100 standard also guarantees protective measures to safeguard human health.
+
+</string>
+    <string name="favorites">Favorites</string>
+    <string name="cart">Cart</string>
+
+    <string name="add_to_cart">Add to cart</string>
+    <string name="price">$%.2f</string>
+    <string name="quantity">Quantity: %d</string>
+    <string name="item_total_price">Item Total Price: $%.2f</string>
+    <string name="sub_total">Sub Total:</string>
+    <string name="order">Order</string>
+    <!-- Strings used for fragments for navigation -->
+    <string name="first_fragment_label">First Fragment</string>
+    <string name="second_fragment_label">Second Fragment</string>
+    <string name="previous">Previous</string>
+
+    <string name="lorem_ipsum">
+        Lorem ipsum dolor sit amet, consectetur adipiscing elit. Nam in scelerisque sem. Mauris
+        volutpat, dolor id interdum ullamcorper, risus dolor egestas lectus, sit amet mattis purus
+        dui nec risus. Maecenas non sodales nisi, vel dictum dolor. Class aptent taciti sociosqu ad
+        litora torquent per conubia nostra, per inceptos himenaeos. Suspendisse blandit eleifend
+        diam, vel rutrum tellus vulputate quis. Aliquam eget libero aliquet, imperdiet nisl a,
+        ornare ex. Sed rhoncus est ut libero porta lobortis. Fusce in dictum tellus.\n\n
+        Suspendisse interdum ornare ante. Aliquam nec cursus lorem. Morbi id magna felis. Vivamus
+        egestas, est a condimentum egestas, turpis nisl iaculis ipsum, in dictum tellus dolor sed
+        neque. Morbi tellus erat, dapibus ut sem a, iaculis tincidunt dui. Interdum et malesuada
+        fames ac ante ipsum primis in faucibus. Curabitur et eros porttitor, ultricies urna vitae,
+        molestie nibh. Phasellus at commodo eros, non aliquet metus. Sed maximus nisl nec dolor
+        bibendum, vel congue leo egestas.\n\n
+        Sed interdum tortor nibh, in sagittis risus mollis quis. Curabitur mi odio, condimentum sit
+        amet auctor at, mollis non turpis. Nullam pretium libero vestibulum, finibus orci vel,
+        molestie quam. Fusce blandit tincidunt nulla, quis sollicitudin libero facilisis et. Integer
+        interdum nunc ligula, et fermentum metus hendrerit id. Vestibulum lectus felis, dictum at
+        lacinia sit amet, tristique id quam. Cras eu consequat dui. Suspendisse sodales nunc ligula,
+        in lobortis sem porta sed. Integer id ultrices magna, in luctus elit. Sed a pellentesque
+        est.\n\n
+        Aenean nunc velit, lacinia sed dolor sed, ultrices viverra nulla. Etiam a venenatis nibh.
+        Morbi laoreet, tortor sed facilisis varius, nibh orci rhoncus nulla, id elementum leo dui
+        non lorem. Nam mollis ipsum quis auctor varius. Quisque elementum eu libero sed commodo. In
+        eros nisl, imperdiet vel imperdiet et, scelerisque a mauris. Pellentesque varius ex nunc,
+        quis imperdiet eros placerat ac. Duis finibus orci et est auctor tincidunt. Sed non viverra
+        ipsum. Nunc quis augue egestas, cursus lorem at, molestie sem. Morbi a consectetur ipsum, a
+        placerat diam. Etiam vulputate dignissim convallis. Integer faucibus mauris sit amet finibus
+        convallis.\n\n
+        Phasellus in aliquet mi. Pellentesque habitant morbi tristique senectus et netus et
+        malesuada fames ac turpis egestas. In volutpat arcu ut felis sagittis, in finibus massa
+        gravida. Pellentesque id tellus orci. Integer dictum, lorem sed efficitur ullamcorper,
+        libero justo consectetur ipsum, in mollis nisl ex sed nisl. Donec maximus ullamcorper
+        sodales. Praesent bibendum rhoncus tellus nec feugiat. In a ornare nulla. Donec rhoncus
+        libero vel nunc consequat, quis tincidunt nisl eleifend. Cras bibendum enim a justo luctus
+        vestibulum. Fusce dictum libero quis erat maximus, vitae volutpat diam dignissim.
+    </string>
+    <string name="orders">Orders</string>
+
+
+</resources>
+

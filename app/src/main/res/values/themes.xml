@@ -1,0 +1,38 @@
+<resources xmlns:tools="http://schemas.android.com/tools">
+    <!-- Base application theme. -->
+    <style name="Base.Theme.Stylista" parent="Theme.Material3.DayNight.NoActionBar">
+        <!-- Customize your light theme here. -->
+        <!-- <item name="colorPrimary">@color/my_light_primary</item> -->
+
+        <item name="android:statusBarColor">@color/white</item>
+        <item name="android:navigationBarColor">@color/white</item>
+        <item name="android:windowLightStatusBar">true</item>
+        <item name="android:windowLightNavigationBar">true</item>
+        <item name="android:textColor">#121212</item>
+        <item name="android:fontFamily">@font/poppins</item>
+
+
+    </style>
+
+    <style name="Theme.Stylista" parent="Base.Theme.Stylista" />
+    <style name="category" parent="TextAppearance.Material3.LabelMedium"  >
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">15sp</item>
+        <item name="android:textColor">#80121212</item>
+    </style>
+    <style name="clothName" parent="TextAppearance.Material3.TitleMedium" >
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#121212</item>
+    </style>
+    <style name="clothPrice" parent="TextAppearance.Material3.TitleMedium" >
+        <item name="android:textFontWeight">500</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#121212</item>
+    </style>
+    <style name="appBarTitle" parent="TextAppearance.Material3.TitleMedium" >
+        <item name="android:textFontWeight">700</item>
+        <item name="android:textSize">20sp</item>
+        <item name="android:textColor">#000000</item>
+    </style>
+</resources>
