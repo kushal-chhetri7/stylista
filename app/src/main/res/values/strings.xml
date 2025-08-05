@@ -59,7 +59,7 @@
     <string name="skip">Skip</string>
     <string name="start">Start</string>
     <string name="dummy_text">Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</string>
-
+    <string name="google_maps_key">m_8</string>
     <array name="delete_reasons">
         <item>I have a different account</item>
         <item>I no longer need this service</item>

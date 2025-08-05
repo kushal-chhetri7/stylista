@@ -131,6 +131,37 @@
                     android:src="@drawable/ic_chevron_right" />
             </LinearLayout>
 
+            <LinearLayout
+                android:id="@+id/addressMenuItem"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal"
+                android:clickable="true"
+                android:focusable="true"
+                android:padding="16dp">
+
+                <ImageView
+                    android:layout_width="24dp"
+                    android:layout_height="24dp"
+                    android:src="@drawable/ic_address" />
+
+                <TextView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center_vertical"
+                    android:layout_marginStart="16dp"
+                    android:layout_weight="1"
+                    android:text="Manage address"
+                    android:textColor="#000000"
+                    android:textSize="16sp" />
+
+                <ImageView
+                    android:layout_width="16dp"
+                    android:layout_height="16dp"
+                    android:layout_gravity="center_vertical"
+                    android:src="@drawable/ic_chevron_right" />
+            </LinearLayout>
+
             <View
                 android:layout_width="match_parent"
                 android:layout_height="1dp"
@@ -160,7 +191,7 @@
                     android:layout_gravity="center_vertical"
                     android:layout_marginStart="16dp"
                     android:layout_weight="1"
-                    android:text="Manage address"
+                    android:text="Payments"
                     android:textColor="#000000"
                     android:textSize="16sp" />
 
@@ -363,7 +394,6 @@
                     android:text="Logout"
                     android:textColor="#000000"
                     android:textSize="16sp" />
-
                 <ImageView
                     android:layout_width="16dp"
                     android:layout_height="16dp"

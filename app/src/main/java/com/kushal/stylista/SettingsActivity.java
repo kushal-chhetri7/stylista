@@ -112,6 +112,16 @@ public class SettingsActivity extends AppCompatActivity {
         findViewById(R.id.ordersMenuItem).setOnClickListener(v -> {
             startActivity(new Intent(SettingsActivity.this, OrderListActivity.class));
         });
+
+        LinearLayout addressMenuItem = findViewById(R.id.addressMenuItem);
+        addressMenuItem.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(SettingsActivity.this, ManageAddressActivity.class);
+                startActivity(intent);
+            }
+        });
+
     }
 
     private void loadFullName() {
